@@ -7,7 +7,6 @@ import re
 import fcntl
 import utils as utils
 
-fptr = None
 g_exec_mode = False
 
 
@@ -42,40 +41,79 @@ class DutListener:
             self.client.close()
             sys.exit(1)
 
+        try:
+            self.wl_fd = open('watch_list.json', "w")
+        except Exception as e:
+            utils.log_dbg('failed to open watch_list file')
+            utils.log_err('Exception : {}'.format(e))
+            sys.exit(1)
+
     def add_to_watch_list(self, cmd, val=None):
         if g_exec_mode:
             return
 
-        global fptr
         self.g_cmd_no += 1
         p_dict = {self.hostname: {'cmd_no': self.g_cmd_no, 'cmd': cmd, 'watchers': val}}
-        fcntl.flock(fptr, fcntl.LOCK_EX)
-        json.dump(p_dict, fptr, sort_keys=True, indent=4)
-        fcntl.flock(fptr, fcntl.LOCK_UN)
-        fptr.flush()
+        fcntl.flock(self.wl_fd, fcntl.LOCK_EX)
+        json.dump(p_dict, self.wl_fd, sort_keys=True, indent=4)
+        fcntl.flock(self.wl_fd, fcntl.LOCK_UN)
+        self.wl_fd.flush()
         pass
 
     def launch_terminal(self):
-        utils.log_info('launching terminal')
+        if self.exec_mode:
+            self.launch_exec_only_terminal()
+        else:
+            self.launch_monitor_terminal()
+
+    def launch_exec_only_terminal(self):
         while True:
             cmd = input('cmd>> ')
             if cmd in ['q', 'exit', 'quit']:
+                self.wl_fd.close()
                 break
             if cmd in ['h', 'help', '?']:
                 print('Enter "exit/quit/q" stop this session.')
                 continue
 
-            if cmd.startswith('sleep'):
-                r1 = re.match(r'sleep [.]?([\d]+)', cmd)
-                if not r1:
-                    print('Provide a valid value to sleep, refer time.sleep')
-                    continue
-                self.add_to_watch_list(cmd)
-                continue
-
             if cmd.startswith(('config', 'show')):
                 cmd = 'sudo ' + cmd
             if cmd.startswith(('sudo config', 'sudo show')):
+                try:
+                    stdin, stdout, stderr = self.client.exec_command(cmd)
+                    lines = stderr.readlines()
+                    if len(lines):
+                        for line in lines:
+                            print('{}'.format(line.strip()))
+                        continue
+                    lines = stdout.readlines()
+                    if len(lines):
+                        for line in lines:
+                            print('{}'.format(line.strip()))
+                        continue
+                except Exception as e:
+                    utils.log_excp('Command execution Failed')
+                    utils.log_excp('Received exception : {}'.format(e))
+                    break
+
+    def launch_monitor_terminal(self):
+        while True:
+            cmd = input('cmd>> ')
+            if cmd in ['q', 'exit', 'quit']:
+                break
+            elif cmd in ['h', 'help', '?']:
+                print('Enter "exit/quit/q" stop this session.')
+            elif cmd.startswith('sleep'):
+                r1 = re.match(r"sleep [.]?([\d]+)", cmd)
+                if not r1:
+                    print('Provide a valid value to sleep, refer time.sleep')
+                else:
+                    self.add_to_watch_list(cmd)
+            elif cmd.startswith(('config', 'show', 'sudo config')):
+                # prepend sudo if its not there already
+                if cmd.startswith('config'):
+                    cmd = 'sudo ' + cmd
+
                 try:
                     stdin, stdout, stderr = self.client.exec_command(cmd)
                     lines = stderr.readlines()
@@ -96,10 +134,6 @@ class DutListener:
                         continue
                     else:
                         re_table, fsm_results = ret
-
-                    # ignore further processing in exec-oly mode
-                    if self.exec_mode:
-                        continue
 
                     utils.log_info('Add watchers.')
                     watchers = []
@@ -138,9 +172,10 @@ class DutListener:
                         watchers.append(temp_dict)
                     self.add_to_watch_list(cmd, val=watchers)
                     pass  # End of while True
-            # all valid command processing is complete
-            # anything else is a invalid command
-            utils.log_err('invalid command')
+            else:
+                # all valid command processing is complete
+                # anything else is a invalid command
+                print('invalid command')
         # End of while True
     pass
 

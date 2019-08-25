@@ -1,17 +1,19 @@
 import glob
 import logging
 from typing import Dict, Any
-
+import pdb
 import textfsm
 from tabulate import tabulate
 
+g_pdb_set = False
+
 
 def process_show_output(cmd, stdout):
-    stdout_data = stdout.read()
+    stdout_data = stdout.read().decode('utf-8')
     cmd_file = cmd[5:].replace(' ', '_')
     try:
         re_table = None
-        for f in glob.glob('../mithran/templates/*.tmpl'):
+        for f in glob.glob('./templates/*.tmpl'):
             if cmd_file in f:
                 template = open(f)
                 re_table = textfsm.TextFSM(template)
@@ -19,8 +21,8 @@ def process_show_output(cmd, stdout):
         if not re_table:
             raise Exception('template file not found for {}'.format(cmd_file))
 
-        fsm_results: Dict[Any, Any] = re_table.ParseText(stdout_data)
-        log_dbg(tabulate(fsm_results, headers=re_table.header, showindex='always', tablefmt='psql'))
+        fsm_results = re_table.ParseText(stdout_data)
+        print(tabulate(fsm_results, headers=re_table.header, showindex='always', tablefmt='psql'))
     except Exception as e:
         log_err('Template parsing Failed')
         log_err('Received exception : {}'.format(e))
@@ -34,7 +36,7 @@ mr_log: logging.Logger = logging.getLogger(__name__)
 
 # Create handlers
 c_handler = logging.StreamHandler()
-f_handler = logging.FileHandler('mrlog.log')
+f_handler = logging.FileHandler('logs/mrlog.log')
 
 c_handler.setLevel(logging.DEBUG) # change to appropriate level after dev complete
 c_handler.setLevel(logging.INFO) # change to appropriate level after dev complete
@@ -63,8 +65,12 @@ def log_info(msg: str) -> None:
 
 
 def log_err(msg: str) -> None:
+    if g_pdb_set:
+        pdb.set_trace()
     mr_log.error(msg)
 
 
 def log_excp(msg: str) -> None:
+    if g_pdb_set:
+        pdb.set_trace()
     mr_log.exception(msg)

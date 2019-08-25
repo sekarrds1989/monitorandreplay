@@ -68,6 +68,8 @@ def start_automation():
         client          = g_ssh_client_dict[key]
         cmd: str        = val['cmd']
         watchers: typing.List  = val['watchers']
+        print('executing : {}'.format(cmd))
+
         if cmd.startswith('sleep'):
             r1 = re.search(r'sleep (.*)', cmd)
             sleep(r1.groups(0))
@@ -104,8 +106,3 @@ def start_automation():
 
             utils.log_info('PASS')
     pass
-
-
-if __name__ == '__main__':
-    build_automation_infra()
-    start_automation()
