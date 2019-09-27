@@ -21,9 +21,6 @@ if args.mode == 'monitor':
                 -e "date; echo connect to %s; python3.7 ./mr.py monitor %s; $SHELL"&'
                 % (dut, dut_connections[dut]['ip'], dut_connections[dut]['ip']))
 else:
-    with open('watch_list.json', 'a') as f:
-        f.writelines('}')
-        f.close()
     os.system(
         'xterm -fa \'Monospace\' -fs 12 -bg black -fg white -geometry 100x50 -sb -title Replay \
         -e "date; python3.7 ./mr.py replay; $SHELL"&')

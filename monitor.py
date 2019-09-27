@@ -10,7 +10,7 @@ import typing as tp
 import os
 
 g_exec_only_mode = False
-g_is_wl_empty_file = False
+g_check_wl_status = True
 
 def read_int_in_range(prefix_str, min_int, max_int) -> int:
     """
@@ -71,8 +71,6 @@ class DutListener:
 
         try:
             self.wl_fd = open('watch_list.json', "a")
-            global g_is_wl_empty_file
-            g_is_wl_empty_file = True if os.stat("file").st_size == 0 else False
 
         except Exception as e:
             utils.log_dbg('failed to open watch_list file')
@@ -93,17 +91,24 @@ class DutListener:
             return
 
         self.g_cmd_no += 1
-        p_dict = {self.hostname: {'cmd_no': self.g_cmd_no, 'cmd': cmd, 'watchers': val}}
-        fcntl.flock(self.wl_fd, fcntl.LOCK_EX)
+        # fmi, json doesnt accept keys in tuple format.
+        p_dict = {self.hostname+'-'+str(self.g_cmd_no): {'cmd': cmd, 'watchers': val}}
         data = json.dumps(p_dict, sort_keys=True, indent=4)
-        global g_is_wl_empty_file
-        if (g_is_wl_empty_file):
-            data = '{\n' + data[1:len(data) - 1]
-            g_is_wl_empty_file = False
+
+        fcntl.flock(self.wl_fd, fcntl.LOCK_EX)
+        global g_check_wl_status
+        if g_check_wl_status:
+            g_check_wl_status = False
+            if os.stat("watch_list.json").st_size == 0:
+                data = '{\n' + data[1:len(data) - 1]
+            else:
+                data = ',' + data[1:len(data) - 1]
         else:
             data = ',' + data[1:len(data) - 1]
+
         self.wl_fd.writelines(data)
         fcntl.flock(self.wl_fd, fcntl.LOCK_UN)
+
         self.wl_fd.flush()
         pass
 
