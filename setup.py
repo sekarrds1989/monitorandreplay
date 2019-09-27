@@ -5,7 +5,7 @@ setup(
     version='0.1',
     py_modules=['mr'],
     install_requires=[
-        'Click',
+        'Click', 'paramiko'
     ],
     entry_points='''
         [console_scripts]

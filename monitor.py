@@ -6,11 +6,21 @@ import json
 import re
 import fcntl
 import utils as utils
+import typing as tp
+import os
 
-g_exec_mode = False
+g_exec_only_mode = False
+g_is_wl_empty_file = False
 
-
-def read_int_in_range(prefix_str, min_int, max_int):
+def read_int_in_range(prefix_str, min_int, max_int) -> int:
+    """
+    Read a number from terminal
+    
+    :param prefix_str: information printed to user
+    :param min_int: range start
+    :param max_int: range end
+    :return: number
+    """
     while True:
         try:
             val = int(input(prefix_str))
@@ -24,13 +34,31 @@ def read_int_in_range(prefix_str, min_int, max_int):
 
 
 class DutListener:
-    def __init__(self, hostname, port, uname, pwd, exec_mode=False):
+    """
+    This Class will Listen to all actions happening on the DUT.
+    Will launch a terminal for the user.
+    Any thing that happens on this terminal is recorded in a file.
+    """
+
+    def __init__(self, hostname: str, port: str, uname: str, pwd: str, exec_only_mode: bool = False):
+        """
+        1) Create a connection to given hostname:port with specified uname & pwd.
+        2) open watch_list.json file in append mode. there might be more than on DutListeners in action.
+
+        :param hostname:  
+        :param port: 
+        :param uname: 
+        :param pwd: 
+        :param exec_only_mode: 
+         True: Dont capture the actions on this terminal
+         False: Capture the actions on this terminal 
+        """
         self.pwd = pwd
         self.uname = uname
         self.port = port
         self.hostname = hostname
         self.client = pc.SSHClient()
-        self.exec_mode = exec_mode
+        self.exec_only_mode = exec_only_mode
         self.g_cmd_no = 0
         try:
             self.client.set_missing_host_key_policy(AutoAddPolicy())
@@ -42,31 +70,55 @@ class DutListener:
             sys.exit(1)
 
         try:
-            self.wl_fd = open('watch_list.json', "w")
+            self.wl_fd = open('watch_list.json', "a")
+            global g_is_wl_empty_file
+            g_is_wl_empty_file = True if os.stat("file").st_size == 0 else False
+
         except Exception as e:
             utils.log_dbg('failed to open watch_list file')
             utils.log_err('Exception : {}'.format(e))
             sys.exit(1)
 
-    def add_to_watch_list(self, cmd, val=None):
-        if g_exec_mode:
+        pass
+
+    def add_to_watch_list(self, cmd: str, val: tp.List = None) -> None:
+        """
+         create a watch_list template.
+         convert it to json format and append to watch_list file.
+        :param cmd: command string
+        :param val: list of dictionary containing which variable to be watched.
+        :return:
+        """
+        if g_exec_only_mode:
             return
 
         self.g_cmd_no += 1
         p_dict = {self.hostname: {'cmd_no': self.g_cmd_no, 'cmd': cmd, 'watchers': val}}
         fcntl.flock(self.wl_fd, fcntl.LOCK_EX)
-        json.dump(p_dict, self.wl_fd, sort_keys=True, indent=4)
+        data = json.dumps(p_dict, sort_keys=True, indent=4)
+        global g_is_wl_empty_file
+        if (g_is_wl_empty_file):
+            data = '{\n' + data[1:len(data) - 1]
+            g_is_wl_empty_file = False
+        else:
+            data = ',' + data[1:len(data) - 1]
+        self.wl_fd.writelines(data)
         fcntl.flock(self.wl_fd, fcntl.LOCK_UN)
         self.wl_fd.flush()
         pass
 
     def launch_terminal(self):
-        if self.exec_mode:
+        if self.exec_only_mode:
             self.launch_exec_only_terminal()
         else:
             self.launch_monitor_terminal()
 
-    def launch_exec_only_terminal(self):
+    def launch_exec_only_terminal(self) -> None:
+        """
+        Launch a execute only terminal.
+        No action on this terminal will be captured in watch_list file.
+        :return: None
+        """
         while True:
             cmd = input('cmd>> ')
             if cmd in ['q', 'exit', 'quit']:
@@ -96,7 +148,12 @@ class DutListener:
                     utils.log_excp('Received exception : {}'.format(e))
                     break
 
-    def launch_monitor_terminal(self):
+    def launch_monitor_terminal(self) -> None:
+        """
+        Launch a terminal and capture all actions happening on this terminal.
+        we will create a watch_list file to generate automation script.
+        :return: None
+        """
         while True:
             cmd = input('cmd>> ')
             if cmd in ['q', 'exit', 'quit']:
@@ -104,7 +161,7 @@ class DutListener:
             elif cmd in ['h', 'help', '?']:
                 print('Enter "exit/quit/q" stop this session.')
             elif cmd.startswith('sleep'):
-                r1 = re.match(r"sleep [.]?([\d]+)", cmd)
+                r1 = re.match(r'sleep [.]?([\d]+)', cmd)
                 if not r1:
                     print('Provide a valid value to sleep, refer time.sleep')
                 else:
@@ -138,7 +195,7 @@ class DutListener:
                     utils.log_info('Add watchers.')
                     watchers = []
                     while True:
-                        row = read_int_in_range('watch>> row : ', min_int=-1, max_int=len(fsm_results)-1)
+                        row = read_int_in_range('watch>> row : ', min_int=-1, max_int=len(fsm_results) - 1)
                         if row == -1:
                             break
                         row_dict = dict(zip(re_table.header, fsm_results[row]))
@@ -177,6 +234,5 @@ class DutListener:
                 # anything else is a invalid command
                 print('invalid command')
         # End of while True
+
     pass
-
-

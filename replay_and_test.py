@@ -33,10 +33,15 @@ each dut will have a client obj
 g_ssh_client_dict: typing.Dict[typing.Any, typing.Any] = {}
 
 g_uname = 'admin'
-g_pwd = 'password'
+g_pwd = 'broadcom'
 
 
-def build_automation_infra():
+def setup_automation_infra() -> None:
+    """
+    Read watch_list file and create all required ssh sessions.
+
+    :return: None
+    """
     global g_dut_ip_list
     global g_wl_dict
 
@@ -64,11 +69,15 @@ def build_automation_infra():
 
 
 def start_automation():
+    """
+    Run automation from watch_list
+    :return:
+    """
     for key, val in g_wl_dict.items():
         client          = g_ssh_client_dict[key]
         cmd: str        = val['cmd']
         watchers: typing.List  = val['watchers']
-        print('executing : {}'.format(cmd))
+        print('{} : executing : {}'.format(key,cmd))
 
         if cmd.startswith('sleep'):
             r1 = re.search(r'sleep (.*)', cmd)

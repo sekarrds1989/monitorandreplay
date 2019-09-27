@@ -1,16 +1,37 @@
+"""
+utils.py::
+This file holds utility functions used across this project. viz. logger and output parsing.
+"""
+
 import glob
 import logging
-from typing import Dict, Any
+import typing as tp
 import pdb
 import textfsm
 from tabulate import tabulate
 
 g_pdb_set = False
 
+empty_tuple: tp.Tuple = ()
+sudo_offset: int = len('sudo ')
 
-def process_show_output(cmd, stdout):
-    stdout_data = stdout.read().decode('utf-8')
-    cmd_file = cmd[5:].replace(' ', '_')
+
+def process_show_output(cmd: str, stdout) -> tp.Tuple:
+    """
+    Execute the given 'cmd' and process the show output from stdout
+    :param cmd: command to be executed on stdout
+    :param stdout:
+    :return:
+     on error   -   None
+     on success -   re_table, fsm_results
+
+     re_table   : tabular format of template
+     fsm_results: parsed output
+
+    """
+
+    stdout_data: str = stdout.read().decode('utf-8')
+    cmd_file: str = cmd[sudo_offset:].replace(' ', '_')
     try:
         re_table = None
         for f in glob.glob('./templates/*.tmpl'):
@@ -27,7 +48,7 @@ def process_show_output(cmd, stdout):
         log_err('Template parsing Failed')
         log_err('Received exception : {}'.format(e))
         log_err(stdout_data)
-        return None
+        return ()
     return re_table, fsm_results
 
 

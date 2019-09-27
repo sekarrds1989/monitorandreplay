@@ -28,7 +28,7 @@ def mr_replay():
     """ Read watchlist.json and replay configs in device"""
 
     utils.log_dbg('start a replay_test session')
-    rt.build_automation_infra()
+    rt.setup_automation_infra()
     rt.start_automation()
     pass
 
@@ -40,7 +40,7 @@ def mr_exec(ip, port='22'):
     """ Create a exec only mode"""
 
     utils.log_dbg('start a exec only session')
-    dut: mt.DutListener = mt.DutListener(ip, port, 'admin', 'broadcom', exec_mode=True)
+    dut: mt.DutListener = mt.DutListener(ip, port, 'admin', 'broadcom', exec_only_mode=True)
     dut.launch_terminal()
     pass
 
