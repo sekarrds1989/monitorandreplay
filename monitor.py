@@ -12,6 +12,7 @@ import os
 g_exec_only_mode = False
 g_check_wl_status = True
 
+
 def read_int_in_range(prefix_str, min_int, max_int) -> int:
     """
     Read a number from terminal
@@ -92,7 +93,7 @@ class DutListener:
 
         self.g_cmd_no += 1
         # fmi, json doesnt accept keys in tuple format.
-        p_dict = {self.hostname+'-'+str(self.g_cmd_no): {'cmd': cmd, 'watchers': val}}
+        p_dict = {self.hostname + '-' + str(self.g_cmd_no): {'cmd': cmd, 'watchers': val}}
         data = json.dumps(p_dict, sort_keys=True, indent=4)
 
         fcntl.flock(self.wl_fd, fcntl.LOCK_EX)
@@ -200,6 +201,46 @@ class DutListener:
                     utils.log_info('Add watchers.')
                     watchers = []
                     while True:
+                        watch_str = input('watch>> (row_list:col_list) : ')
+                        if watch_str == 'end':
+                            break
+                        elif watch_str.count(':') != 1:
+                            print('%Error% Invalid Input')
+                            print('FORMAT ->> row-index-list:col-index-list')
+                            print('\'end\' to stop')
+                            print('ex:')
+                            print('1,2,3::4 >> watch 4th column in rows 1,2,3')
+                            print('1,2,3::-1 >> watch all columns in rows 1,2,3')
+                            print('-1::4 >> watch 4th column in all rows')
+                            continue
+
+                        row_str, col_str = tuple(watch_str.split(':'))
+                        if row_str == '-1':
+                            row_list = list(range(0, len(fsm_results)))
+                        else:
+                            row_list = re.findall("[\d]+", row_str)
+                            row_list = list(map(int, row_list))
+
+                        if col_str == '-1':
+                            col_list = list(range(0, len(re_table.header)))
+                        else:
+                            col_list = re.findall("[\d]+", col_str)
+                            col_list = list(map(int, col_list))
+
+                        import pdb
+                        pdb.set_trace()
+                        for row in row_list:
+                            if row >= len(fsm_results):
+                                continue
+                            row_dict = dict(zip(re_table.header, fsm_results[row]))
+                            user_dict = {}
+                            for col in col_list:
+                                if col >= len(re_table.header):
+                                    continue
+                                col_name = re_table.header[col]
+                                user_dict[col_name] = row_dict[col_name]
+                            watchers.append(user_dict)
+                        """
                         row = read_int_in_range('watch>> row : ', min_int=-1, max_int=len(fsm_results) - 1)
                         if row == -1:
                             break
@@ -231,7 +272,9 @@ class DutListener:
                                 temp_dict = copy.deepcopy(user_dict)
                         else:
                             temp_dict = copy.deepcopy(row_dict)
+                        
                         watchers.append(temp_dict)
+                        """
                     self.add_to_watch_list(cmd, val=watchers)
                     pass  # End of while True
             else:

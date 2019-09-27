@@ -7,8 +7,8 @@ args = parser.parse_args()
 print(args)
 
 
-dut_connections = {'D1': {'ip': '10.59.136.31', 'port': '22'},
-                   'D2': {'ip': '10.59.136.32', 'port': '22'}
+dut_connections = {'D1': {'ip': '10.59.142.211', 'port': '22'},
+                   'D2': {'ip': '10.59.143.77', 'port': '22'}
                    }
 
 if args.mode == 'monitor':
