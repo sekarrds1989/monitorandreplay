@@ -1,38 +1,33 @@
 {
 
-    "10.59.142.211-1": {
-        "cmd": "sudo config vlan add 111",
+    "D2-1": {
+        "cmd": "show vlan bri",
+        "watchers": []
+    }
+,
+    "D2-2": {
+        "cmd": "sudo config vlan add 100",
         "watchers": null
     }
 ,
-    "10.59.142.211-2": {
+    "D2-3": {
         "cmd": "show vlan bri",
         "watchers": [
-            {
-                "VID": "100"
-            }
-        ]
-    }
-,
-    "10.59.142.211-3": {
-        "cmd": "show vlan bri",
-        "watchers": [
-            {
-                "IpAdd": "",
-                "PortTagging": "",
-                "VID": "100"
-            },
-            {
-                "IpAdd": "",
-                "PortTagging": "",
-                "VID": "111"
-            },
             {
                 "DHCPHelperAdd": "",
                 "IpAdd": "",
                 "PortTagging": "",
                 "Ports": "",
-                "VID": "111"
+                "VID": "100"
+            }
+        ]
+    }
+,
+    "D2-1": {
+        "cmd": "show vlan bri",
+        "watchers": [
+            {
+                "VID": "100"
             }
         ]
     }

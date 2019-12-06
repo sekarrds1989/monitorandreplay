@@ -6,6 +6,7 @@ from paramiko import AutoAddPolicy
 import sys
 import utils as utils
 import json
+from topo import dut_connections as dcon
 
 """
 global watch_list data
@@ -122,11 +123,18 @@ def setup_automation_infra() -> None:
         with open('watch_list.json', 'r') as wl:
             g_wl_dict = json.load(wl)
 
+    """
     keys = set([dut_ip_cmd_no[:-2] for dut_ip_cmd_no in g_wl_dict.keys()])
 
     for idx,dut_ip in enumerate(keys):
         dc = DutClients(dut_ip, 'D'+str(idx))
         g_dut_clients[dut_ip] = dc
+    """
+    for dut_cmdno in g_wl_dict.keys():
+        dut = dut_cmdno.split('-')[0]
+        dc = DutClients(dcon[dut]['ip'], dut)
+        g_dut_clients[dcon[dut]['ip']] = dc
+
 
     pass
 
@@ -136,12 +144,13 @@ def start_automation() -> None:
     Run automation from watch_list
     :return:
     """
-    for dut_ip_cmd_no, val in g_wl_dict.items():
-        dut_ip = dut_ip_cmd_no[:-2]
+    for dut_cmdno, val in g_wl_dict.items():
+        dut = dut_cmdno.split('-')[0]
+        dut_ip = dcon[dut]['ip']
         dc          = g_dut_clients[dut_ip]
         cmd: str    = val['cmd']
         watchers: typing.List  = val['watchers']
-        print('{} : executing : {}'.format(dut_ip_cmd_no,cmd))
+        print('{} : executing : {}'.format(dut_cmdno,cmd))
 
         dc.exec_cmd(cmd,watchers)
 

@@ -9,6 +9,9 @@ import utils as utils
 import typing as tp
 import os
 
+from topo import dut_connections as dcon
+
+
 g_exec_only_mode = False
 g_check_wl_status = True
 
@@ -41,12 +44,12 @@ class DutListener:
     Any thing that happens on this terminal is recorded in a file.
     """
 
-    def __init__(self, hostname: str, port: str, uname: str, pwd: str, exec_only_mode: bool = False):
+    def __init__(self, hostip: str, port: str, uname: str, pwd: str, exec_only_mode: bool = False):
         """
-        1) Create a connection to given hostname:port with specified uname & pwd.
+        1) Create a connection to given hostip:port with specified uname & pwd.
         2) open watch_list.json file in append mode. there might be more than on DutListeners in action.
 
-        :param hostname:  
+        :param hostip:
         :param port: 
         :param uname: 
         :param pwd: 
@@ -57,15 +60,21 @@ class DutListener:
         self.pwd = pwd
         self.uname = uname
         self.port = port
-        self.hostname = hostname
+        self.hostip = hostip
         self.client = pc.SSHClient()
         self.exec_only_mode = exec_only_mode
         self.g_cmd_no = 0
+        self.hostname = 'NA'
+
+        for dut in dcon.keys():
+            if dcon[dut]['ip'] == hostip:
+                self.hostname = dut
+
         try:
             self.client.set_missing_host_key_policy(AutoAddPolicy())
-            self.client.connect(self.hostname, username=self.uname, password=self.pwd)
+            self.client.connect(self.hostip, username=self.uname, password=self.pwd)
         except Exception as e:
-            utils.log_excp('Client connection Failed : {} {} {} {}'.format(hostname, port, uname, pwd))
+            utils.log_excp('Client connection Failed : {} {} {} {}'.format(hostip, port, uname, pwd))
             utils.log_excp('Received exception : {}'.format(e))
             self.client.close()
             sys.exit(1)
