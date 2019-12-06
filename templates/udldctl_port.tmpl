@@ -1,0 +1,36 @@
+Value Required PORT (\d+)
+Value CFG_ENABLE (\S)
+Value CFG_AGGR (\S)
+Value OPER_LNSTATE (\S+)
+Value OPER_OPCODE (\S+)
+Value OPER_UDLDSTATE (\S+)
+Value OPER_PHASE (\S+)
+Value NBR_DEVID (\S+)
+Value NBR_DEVID_LEN (\d+)
+Value NBR_PORTID (\S+)
+Value NBR_PORTID_LEN (\d+)
+Value NBR_TIMEOUT (\d+)
+Value NBR_MSGTIME (\d+)
+
+Start
+  #
+  #match with neighbor
+  #
+  ^\s*${PORT}\s*\|\s*${CFG_ENABLE}\s*\|\s*${CFG_AGGR}\s*\|\s*${OPER_LNSTATE}\s*\|\s*${OPER_OPCODE}\s*\|\s*${OPER_UDLDSTATE}\s*\|\s*${OPER_PHASE}\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*$$
+  ^ Neighbor Info:$$
+  ^------------------------------------------------------------------------------------------------$$
+  ^Port | Device-id        |  Port-id      | Timeout  | Msg-time | Last Change time$$
+  ^------------------------------------------------------------------------------------------------$$
+  ^\s*\d+\s*\|\s*${NBR_DEVID}\(${NBR_DEVID_LEN}\)\s*\|\s*${NBR_PORTID}\(${NBR_PORTID_LEN}\)\s*\|\s*${NBR_TIMEOUT}\s*\|\s*${NBR_MSGTIME}\s*\|\s*\d+\s*$$
+  ^Udld Statistics$$ -> Record
+  #
+  #match without neighbor
+  #
+  ^\s*${PORT}\s*\|\s*${CFG_ENABLE}\s*\|\s*${CFG_AGGR}\s*\|\s*${OPER_LNSTATE}\s*\|\s*${OPER_OPCODE}\s*\|\s*${OPER_UDLDSTATE}\s*\|\s*${OPER_PHASE}\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*$$
+  ^ Neighbor Info:$$
+  ^------------------------------------------------------------------------------------------------$$
+  ^Port | Device-id        |  Port-id      | Timeout  | Msg-time | Last Change time$$
+  ^------------------------------------------------------------------------------------------------$$
+  ^Udld Statistics$$ -> Record
+
+EOF

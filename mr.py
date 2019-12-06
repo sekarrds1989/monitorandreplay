@@ -1,4 +1,3 @@
-import sys
 import monitor as mt
 import replay_and_test as rt
 import click
@@ -6,14 +5,17 @@ import utils as utils
 
 
 @click.group('mr')
-def monitor_replay():
+@click.option('-g', '--gdb', is_flag=True, help='stop at pdb on error')
+def monitor_replay(gdb):
     """ monitor and replay commands on ssh terminal"""
+    if gdb:
+        utils.g_pdb_set = True
     pass
 
 
 @monitor_replay.command('monitor')
 @click.argument('ip',required=True)
-@click.argument('port',required=False)
+@click.argument('port',required=True)
 def mr_monitor(ip, port='22'):
     """ monitor the session and store commands in watchlist.json"""
 
@@ -35,7 +37,7 @@ def mr_replay():
 
 @monitor_replay.command('exec_mode')
 @click.argument('ip', required=True)
-@click.argument('port',required=False)
+@click.argument('port',required=True)
 def mr_exec(ip, port='22'):
     """ Create a exec only mode"""
 
@@ -46,6 +48,5 @@ def mr_exec(ip, port='22'):
 
 
 if __name__ == '__main__':
-    utils.g_pdb_set = True
     monitor_replay()
     pass

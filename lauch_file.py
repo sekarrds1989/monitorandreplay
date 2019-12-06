@@ -1,25 +1,56 @@
 import os
-import argparse
 from topo import dut_connections as dcon
+import click
 
-parser = argparse.ArgumentParser(description='Monitor-Replay launcher.')
+"""
+This is a launcher file.
+For monitor, it will open a terminal for each dut listed in topo.py
+For replay , it will open 1 terminal
 
-parser.add_argument('mode', choices=['monitor', 'replay'])
-args = parser.parse_args()
-print(args)
+And execute the appropriate command on the terminal.
+"""
 
 
-if args.mode == 'monitor':
+@click.group('launchmr')
+@click.pass_context
+@click.option('-g', '--gdb', is_flag=True, help='stop at pdb on error')
+def launch_mr(ctx, gdb):
+    ctx.obj['options'] = ''
+    if gdb:
+        ctx.obj['options'] += ' --gdb'
+    pass
+
+
+@launch_mr.command('monitor')
+@click.pass_context
+def launch_mr_monitor(ctx):
     # erase contents of the file
     open('watch_list.json', 'w').close()
 
     for dut in dcon.keys():
-            os.system(
-                'xterm -fa \'Monospace\' -fs 12 -bg black -fg white -geometry 100x50 -sb -title %s \
-                -e "date; echo connect to %s; python3.7 ./mr.py monitor %s; $SHELL"&'
-                % (dut, dcon[dut]['ip'], dcon[dut]['ip']))
-else:
-    os.system(
-        'xterm -fa \'Monospace\' -fs 12 -bg black -fg white -geometry 100x50 -sb -title Replay \
-        -e "date; python3.7 ./mr.py replay; $SHELL"&')
+        with open('{}_monitor.sh'.format(dut), 'w') as d1bash:
+            d1bash.writelines('#!/bin/bash\
+            \n\ncd /Users/dr412113/PycharmProjects/monitorandreplay\
+            \necho connect to {}\npython3.7 ./mr.py {} monitor {} {}\
+            \nbash'.format(dut, ctx.obj['options'], dcon[dut]['ip'], dcon[dut]['port']))
+
+        os.system('chmod +x %s_monitor.sh'%(dut))
+        os.system('open -a Terminal %s_monitor.sh'%(dut))
+
+
+@launch_mr.command('replay')
+@click.pass_context
+def launch_mr_replay(ctx):
+    with open('replay.sh', 'w') as d1bash:
+        d1bash.writelines('#!/bin/bash\
+        \n\ncd /Users/dr412113/PycharmProjects/monitorandreplay\
+        \npython3.7 ./mr.py {} replay\
+        \nbash'.format(ctx.obj['options']))
+    os.system('chmod +x replay.sh')
+    os.system('open -a Terminal replay.sh')
+
+
+if __name__ == '__main__':
+    launch_mr(obj={})
+    pass
 

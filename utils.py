@@ -31,7 +31,12 @@ def process_show_output(cmd: str, stdout) -> tp.Tuple:
     """
 
     stdout_data: str = stdout.read().decode('utf-8')
-    cmd_file: str = cmd[sudo_offset:].replace(' ', '_')
+    if cmd.startswith('udldctl port'):
+        cmd_file = 'udldctl_port.tmpl'
+    else:
+        cmd = cmd[sudo_offset:]
+        cmd_file = cmd.replace(' ', '_')
+
     try:
         re_table = None
         for f in glob.glob('./templates/*.tmpl'):

@@ -170,24 +170,21 @@ class DutListener:
         :return: None
         """
         while True:
-            cmd = input('cmd>> ')
+            cmd = input('sonic# ')
             if cmd in ['q', 'exit', 'quit']:
                 break
             elif cmd in ['h', 'help', '?']:
                 print('Enter "exit/quit/q" stop this session.')
+                continue
             elif cmd.startswith('sleep'):
                 r1 = re.match(r'sleep [.]?([\d]+)', cmd)
                 if not r1:
                     print('Provide a valid value to sleep, refer time.sleep')
-                else:
-                    self.add_to_watch_list(cmd)
-            elif cmd.startswith(('config', 'show', 'sudo config')):
-                # prepend sudo if its not there already
-                if cmd.startswith('config'):
-                    cmd = 'sudo ' + cmd
-
+                    continue
+            else:
                 try:
                     stdin, stdout, stderr = self.client.exec_command(cmd)
+
                     lines = stderr.readlines()
                     if len(lines):
                         for line in lines:
@@ -198,9 +195,9 @@ class DutListener:
                     utils.log_excp('Received exception : {}'.format(e))
                     break
 
-                if cmd.startswith('sudo config'):
-                    self.add_to_watch_list(cmd)
-                else:  # cmd.startswith('sudo show'):
+                #print(stdout.readlines())
+
+                if cmd.startswith(('udldctl', 'sudo show', 'show')):
                     ret = utils.process_show_output(cmd, stdout)
                     if ret is None:
                         continue
@@ -236,8 +233,6 @@ class DutListener:
                             col_list = re.findall("[\d]+", col_str)
                             col_list = list(map(int, col_list))
 
-                        import pdb
-                        pdb.set_trace()
                         for row in row_list:
                             if row >= len(fsm_results):
                                 continue
@@ -248,48 +243,12 @@ class DutListener:
                                     continue
                                 col_name = re_table.header[col]
                                 user_dict[col_name] = row_dict[col_name]
+                            # end for col in col_list:
                             watchers.append(user_dict)
-                        """
-                        row = read_int_in_range('watch>> row : ', min_int=-1, max_int=len(fsm_results) - 1)
-                        if row == -1:
-                            break
-                        row_dict = dict(zip(re_table.header, fsm_results[row]))
-
-                        print('select columns watch mode')
-                        print('all          : 0')
-                        print('ignore list  : 1')
-                        print('include list : 2')
-                        mode = read_int_in_range('mode : ', min_int=0, max_int=2)
-
-                        if mode != 0:
-                            user_dict = {}
-                            while True:
-                                col = input('watch>> col : ')
-                                if col == 'end':
-                                    break
-                                if col not in re_table.header:
-                                    print('Invalid input : {}'.format(col))
-                                    print('Enter "end" to exit')
-                                    continue
-
-                                user_dict[col] = row_dict[col]
-                            # End of while
-
-                            if mode == 1:
-                                temp_dict = dict(set(row_dict.items()) - set(user_dict.items()))
-                            else:
-                                temp_dict = copy.deepcopy(user_dict)
-                        else:
-                            temp_dict = copy.deepcopy(row_dict)
-                        
-                        watchers.append(temp_dict)
-                        """
-                    self.add_to_watch_list(cmd, val=watchers)
-                    pass  # End of while True
-            else:
-                # all valid command processing is complete
-                # anything else is a invalid command
-                print('invalid command')
+                        # end for row in row_list
+                    # end while True for watchlist
+                else:
+                    watchers = None
+            self.add_to_watch_list(cmd, val=watchers)
         # End of while True
-
     pass

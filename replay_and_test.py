@@ -7,6 +7,8 @@ import sys
 import utils as utils
 import json
 from topo import dut_connections as dcon
+import datetime
+
 
 """
 global watch_list data
@@ -41,6 +43,8 @@ class DutClients:
     """
 
     """
+
+
     def __init__(self, dut_ip: str, dut_name: str):
         self.dut_ip = dut_ip
         self.dut_name = dut_name
@@ -57,8 +61,23 @@ class DutClients:
             sys.exit(1)
         pass
 
+    def syslog(self, opcode, line):
+        self.log_file.writelines('\n{} : {:>15} :: {}'.format(datetime.datetime.now(), opcode, line))
+        if opcode == 'ERR':
+            utils.log_err(line)
+        if opcode == 'INFO':
+            utils.log_info(line)
+
+    def abort_test(self):
+        if utils.g_pdb_set:
+            import pdb
+            pdb.set_trace()
+        else:
+            self.syslog('ERR', 'Aborting Test')
+            exit(0)
+
     def exec_cmd(self,cmd,watchers):
-        self.log_file.writelines('\n\n>>> CMD : {}'.format(cmd))
+        self.syslog('CMD',cmd)
 
         if cmd.startswith('sleep'):
             r1 = re.search(r'sleep (.*)', cmd)
@@ -67,22 +86,23 @@ class DutClients:
         stdin,stdout,stderr = self.client.exec_command(cmd)
         lines = stderr.readlines()
         if len(lines):
-            self.log_file.writelines('\nSTDERR : \n{}'.format(lines))
+            self.syslog('ERR',lines)
             for line in lines:
                 utils.log_excp('{}'.format(line.strip()))
             return
-        if cmd.startswith('show'):
+        if cmd.startswith(('show', 'udldctl')):
             ret = utils.process_show_output(cmd, stdout)
             if watchers and ret is None:
-                utils.log_excp('FAILED : \n{}: {}'.format(key, val))
+                self.syslog('ERR', 'Failed to Process show output for {}'.format(cmd))
                 return
             else:
                 re_table, fsm_results = ret
-            self.log_file.writelines('\nFSM_RESULTS : \n{}'.format(fsm_results))
+            self.syslog('INFO', fsm_results)
 
             # compare show output with watchers
             for subset in watchers:
                 match_found = False
+                superset = {}
                 for row in fsm_results:
                     superset = dict(zip(re_table.header, row))
                     # check if subset in superset
@@ -90,15 +110,13 @@ class DutClients:
                         match_found = True
                         break
                 if not match_found:
-                    self.log_file.writelines('\n =====>>>>> FAILED : match not found for \n{}'.format(subset))
-                    utils.log_excp('match not found for'.format(subset))
-                    utils.log_excp('subset : {}'.format(subset))
-                    utils.log_excp('show   : {}'.format(fsm_results))
-                    utils.log_excp('FAILED')
-                    return
+                    self.syslog('ERR', 'Test FAILED: ')
+                    self.syslog('ERR', 'Expected : {}'.format(subset))
+                    self.syslog('ERR', 'Actual   : {}'.format(superset))
+                    self.abort_test()
                 else:
-                    self.log_file.writelines('\n =====>>>>> PASSED : match found for \n{}'.format(subset))
-            utils.log_info('\n =====>>>>> TC PASS')
+                    self.syslog('INFO','match found {}'.format(subset))
+            self.syslog('INFO', 'TestCase PASSED')
         pass
 
 
