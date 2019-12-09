@@ -8,6 +8,7 @@ import utils as utils
 import json
 from topo import dut_connections as dcon
 import datetime
+from tabulate import tabulate
 
 
 """
@@ -72,11 +73,10 @@ class DutClients:
         if utils.g_pdb_set:
             import pdb
             pdb.set_trace()
-        else:
-            self.syslog('ERR', 'Aborting Test')
-            exit(0)
+        self.syslog('ERR', 'Aborting Test')
+        sys.exit(1)
 
-    def exec_cmd(self,cmd,watchers):
+    def exec_cmd(self,tc_id,cmd,exp_op_list):
         self.syslog('CMD',cmd)
 
         if cmd.startswith('sudo sleep'):
@@ -92,31 +92,47 @@ class DutClients:
 
         if cmd.startswith(utils.show_cmd_pattern):
             ret = utils.process_show_output(cmd, stdout)
-            if watchers and ret is None:
+            if exp_op_list and ret is None:
                 self.syslog('ERR', 'Failed to Process show output for {}'.format(cmd))
                 return
             else:
                 re_table, fsm_results = ret
-            self.syslog('INFO', fsm_results)
 
-            # compare show output with watchers
-            for subset in watchers:
+            key_col_name = ''
+            for exp_op in exp_op_list:
+                if 'watch-key' in exp_op.keys():
+                    key_col_name = exp_op['watch-key']
+                    continue
+
+                entry_w_key = {}
                 match_found = False
-                superset = {}
+                actual_op = {}
                 for row in fsm_results:
-                    superset = dict(zip(re_table.header, row))
-                    # check if subset in superset
-                    if subset.items() <= superset.items():
-                        match_found = True
-                        break
+                    actual_op = dict(zip(re_table.header, row))
+                    if actual_op[key_col_name] == exp_op[key_col_name]:
+                        entry_w_key = actual_op
+                        # check if exp_op is a subset of actual op
+                        if exp_op.items() <= actual_op.items():
+                            match_found = True
+                            break
+
                 if not match_found:
-                    self.syslog('ERR', 'Test FAILED: ')
-                    self.syslog('ERR', 'Expected : {}'.format(subset))
-                    self.syslog('ERR', 'Actual   : {}'.format(superset))
+                    self.syslog('ERR', 'Test {} FAILED'.format(tc_id))
+                    if not entry_w_key:
+                        self.syslog('ERR', 'Entry with key({}:{}) not Found'.format(key_col_name,exp_op[key_col_name]))
+                    else:
+                        header = ['output']
+                        diff_table = [['Exp'],['Actual']]
+                        for key in entry_w_key.keys():
+                            header.append(key)
+                            diff_table[0].append(exp_op[key])
+                            diff_table[1].append(entry_w_key[key])
+                        self.syslog('ERR', ' Exp Vs Actual \n {}'.format(tabulate(diff_table, headers=header
+                                                                                 , showindex='always'
+                                                                                 , tablefmt='psql')))
                     self.abort_test()
-                else:
-                    self.syslog('INFO','match found {}'.format(subset))
-            self.syslog('INFO', 'TestCase PASSED')
+
+            self.syslog('INFO', 'Test {} PASSED'.format(tc_id))
         pass
 
 
@@ -169,6 +185,6 @@ def start_automation() -> None:
         watchers: typing.List  = val['watchers']
         utils.log_info('{} : executing : {}'.format(dut_cmdno,cmd))
 
-        dc.exec_cmd(cmd,watchers)
+        dc.exec_cmd(dut_cmdno, cmd,watchers)
 
     pass

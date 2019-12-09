@@ -175,7 +175,22 @@ class DutListener:
                     else:
                         re_table, fsm_results = ret
 
-                    utils.log_info('Add watchers.')
+                    print('Add watchers :: \n')
+                    key_col_id = int(input('key field col-id: '))
+                    i = 0
+                    invalid_key = False
+                    for row in fsm_results:
+                        if row[key_col_id] == '':
+                            print('%Error : key cant be empty @ row-{}'.format(i))
+                            invalid_key = True
+                            break
+                        i = i + 1
+
+                    if invalid_key:
+                        continue
+
+                    key_col_name = re_table.header[key_col_id]
+
                     while True:
                         watch_str = input('watch>> (row_list:col_list) : ')
                         if watch_str == 'end':
@@ -196,18 +211,40 @@ class DutListener:
                         else:
                             row_list = re.findall("[\d]+", row_str)
                             row_list = list(map(int, row_list))
+                            invalid_row_id = False
+                            row_id = 0
+                            for row_id in row_list:
+                                if row_id >= len(fsm_results):
+                                    invalid_row_id = True
+                                    break
+
+                            if invalid_row_id:
+                                print('%Error row id {} > max rows {}'.format(row_id, len(fsm_results)))
+                                continue
 
                         if col_str == '-1':
                             col_list = list(range(0, len(re_table.header)))
                         else:
                             col_list = re.findall("[\d]+", col_str)
                             col_list = list(map(int, col_list))
+                            invalid_col_id = False
+                            col_id = 0
+                            for col_id in col_list:
+                                if col_id >= len(re_table.header):
+                                    invalid_col_id = True
+                                    break
 
+                            if invalid_col_id:
+                                print('%Error col id {} > max cols {}'.format(col_id, len(re_table.header)))
+                                continue
+
+                        watchers.append({'watch-key': key_col_name})
                         for row in row_list:
                             if row >= len(fsm_results):
                                 continue
                             row_dict = dict(zip(re_table.header, fsm_results[row]))
-                            user_dict = {}
+                            # add key as 1st elem in dict
+                            user_dict = {key_col_name: row_dict[key_col_name]}
                             for col in col_list:
                                 if col >= len(re_table.header):
                                     continue
