@@ -35,31 +35,31 @@ each dut will have a client obj
 """
 g_ssh_client_dict: typing.Dict[typing.Any, typing.Any] = {}
 g_dut_clients: typing.Dict = {}
-g_uname = 'admin'
-g_pwd = 'broadcom'
-
 
 class DutClients:
-    """
-
-    """
-
-
-    def __init__(self, dut_ip: str, dut_name: str):
-        self.dut_ip = dut_ip
+    def __init__(self, dut_name: str, hostip: str, port: str, uname: str, pwd: str):
+        self.uname = uname
+        self.pwd = pwd
+        self.hostip = hostip
+        self.port = port
         self.dut_name = dut_name
         self.log_file = open(dut_name+'_log','w')
-        self.client = pc.SSHClient()
 
         try:
+            self.client = pc.SSHClient()
             self.client.set_missing_host_key_policy(AutoAddPolicy())
-            self.client.connect(dut_ip, username=g_uname, password=g_pwd)
+            self.client.connect(self.hostip, username=self.uname, password=self.pwd, timeout=10)
+            transport = self.client.get_transport()
+            self.chan = transport.open_session()
+            self.chan.get_pty()
+            self.chan.invoke_shell()
+
         except Exception as e:
-            utils.log_excp('Client connection Failed : {} {} {} {}'.format(dut_ip, '22', g_uname, g_pwd))
+            utils.log_excp('Client connection Failed : {} {} {} {}'.format(hostip, port, uname, pwd))
             utils.log_excp('Received exception : {}'.format(e))
             self.client.close()
             sys.exit(1)
-        pass
+            pass
 
     def syslog(self, opcode, line):
         self.log_file.writelines('\n{} : {:>15} :: {}'.format(datetime.datetime.now(), opcode, line))
@@ -79,18 +79,18 @@ class DutClients:
     def exec_cmd(self,cmd,watchers):
         self.syslog('CMD',cmd)
 
-        if cmd.startswith('sleep'):
+        if cmd.startswith('sudo sleep'):
             r1 = re.search(r'sleep (.*)', cmd)
             sleep(r1.groups(0))
 
-        stdin,stdout,stderr = self.client.exec_command(cmd)
-        lines = stderr.readlines()
-        if len(lines):
-            self.syslog('ERR',lines)
-            for line in lines:
-                utils.log_excp('{}'.format(line.strip()))
+        try:
+            stdout = utils.run_command(self.chan, cmd)
+        except Exception as e:
+            utils.log_excp('Command execution Failed')
+            utils.log_excp('Received exception : {}'.format(e))
             return
-        if cmd.startswith(('show', 'udldctl')):
+
+        if cmd.startswith(utils.show_cmd_pattern):
             ret = utils.process_show_output(cmd, stdout)
             if watchers and ret is None:
                 self.syslog('ERR', 'Failed to Process show output for {}'.format(cmd))
@@ -150,9 +150,8 @@ def setup_automation_infra() -> None:
     """
     for dut_cmdno in g_wl_dict.keys():
         dut = dut_cmdno.split('-')[0]
-        dc = DutClients(dcon[dut]['ip'], dut)
+        dc = DutClients(dut, dcon[dut]['ip'], '22', 'admin', 'broadcom')
         g_dut_clients[dcon[dut]['ip']] = dc
-
 
     pass
 
@@ -168,7 +167,7 @@ def start_automation() -> None:
         dc          = g_dut_clients[dut_ip]
         cmd: str    = val['cmd']
         watchers: typing.List  = val['watchers']
-        print('{} : executing : {}'.format(dut_cmdno,cmd))
+        utils.log_info('{} : executing : {}'.format(dut_cmdno,cmd))
 
         dc.exec_cmd(cmd,watchers)
 

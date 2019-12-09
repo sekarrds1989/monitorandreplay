@@ -19,7 +19,7 @@ def monitor_replay(gdb):
 def mr_monitor(ip, port='22'):
     """ monitor the session and store commands in watchlist.json"""
 
-    utils.log_dbg('start a monitor session')
+    utils.log_debug('start a monitor session')
     dut: mt.DutListener = mt.DutListener(ip, port, 'admin', 'broadcom')
     dut.launch_terminal()
     pass
@@ -29,7 +29,7 @@ def mr_monitor(ip, port='22'):
 def mr_replay():
     """ Read watchlist.json and replay configs in device"""
 
-    utils.log_dbg('start a replay_test session')
+    utils.log_debug('start a replay_test session')
     rt.setup_automation_infra()
     rt.start_automation()
     pass
@@ -41,12 +41,13 @@ def mr_replay():
 def mr_exec(ip, port='22'):
     """ Create a exec only mode"""
 
-    utils.log_dbg('start a exec only session')
+    utils.log_debug('start a exec only session')
     dut: mt.DutListener = mt.DutListener(ip, port, 'admin', 'broadcom', exec_only_mode=True)
     dut.launch_terminal()
     pass
 
 
 if __name__ == '__main__':
+    utils.logger_init()
     monitor_replay()
     pass

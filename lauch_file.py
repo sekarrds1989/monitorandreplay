@@ -26,6 +26,7 @@ def launch_mr(ctx, gdb):
 def launch_mr_monitor(ctx):
     # erase contents of the file
     open('watch_list.json', 'w').close()
+    open('logs/mrlog.log', 'w').close()
 
     for dut in dcon.keys():
         with open('{}_monitor.sh'.format(dut), 'w') as d1bash:

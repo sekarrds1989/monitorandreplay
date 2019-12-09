@@ -1,7 +1,6 @@
 import paramiko.client as pc
 from paramiko import AutoAddPolicy
 import sys
-import copy
 import json
 import re
 import fcntl
@@ -14,28 +13,6 @@ from topo import dut_connections as dcon
 
 g_exec_only_mode = False
 g_check_wl_status = True
-
-
-def read_int_in_range(prefix_str, min_int, max_int) -> int:
-    """
-    Read a number from terminal
-    
-    :param prefix_str: information printed to user
-    :param min_int: range start
-    :param max_int: range end
-    :return: number
-    """
-    while True:
-        try:
-            val = int(input(prefix_str))
-            if min_int <= val <= max_int:
-                return val
-        except Exception as e:
-            utils.log_excp('Please enter a valid int in range {}-{}'.format(min_int, max_int))
-            utils.log_excp('Received exception : {}'.format(e))
-            continue
-    pass
-
 
 class DutListener:
     """
@@ -72,7 +49,12 @@ class DutListener:
 
         try:
             self.client.set_missing_host_key_policy(AutoAddPolicy())
-            self.client.connect(self.hostip, username=self.uname, password=self.pwd)
+            self.client.connect(self.hostip, username=self.uname, password=self.pwd, timeout=10)
+            transport = self.client.get_transport()
+            self.chan = transport.open_session()
+            self.chan.get_pty()
+            self.chan.invoke_shell()
+
         except Exception as e:
             utils.log_excp('Client connection Failed : {} {} {} {}'.format(hostip, port, uname, pwd))
             utils.log_excp('Received exception : {}'.format(e))
@@ -83,7 +65,7 @@ class DutListener:
             self.wl_fd = open('watch_list.json', "a")
 
         except Exception as e:
-            utils.log_dbg('failed to open watch_list file')
+            utils.log_err('failed to open watch_list file')
             utils.log_err('Exception : {}'.format(e))
             sys.exit(1)
 
@@ -139,29 +121,19 @@ class DutListener:
             if cmd in ['q', 'exit', 'quit']:
                 self.wl_fd.close()
                 break
-            if cmd in ['h', 'help', '?']:
+            elif cmd in ['h', 'help', '?']:
                 print('Enter "exit/quit/q" stop this session.')
                 continue
-
-            if cmd.startswith(('config', 'show')):
+            elif not cmd.startswith('sudo'):
                 cmd = 'sudo ' + cmd
-            if cmd.startswith(('sudo config', 'sudo show')):
-                try:
-                    stdin, stdout, stderr = self.client.exec_command(cmd)
-                    lines = stderr.readlines()
-                    if len(lines):
-                        for line in lines:
-                            print('{}'.format(line.strip()))
-                        continue
-                    lines = stdout.readlines()
-                    if len(lines):
-                        for line in lines:
-                            print('{}'.format(line.strip()))
-                        continue
-                except Exception as e:
-                    utils.log_excp('Command execution Failed')
-                    utils.log_excp('Received exception : {}'.format(e))
-                    break
+
+            try:
+                stdout = utils.run_command(self.chan, cmd)
+                utils.log_info('{}'.format(stdout))
+            except Exception as e:
+                utils.log_excp('Command execution Failed')
+                utils.log_excp('Received exception : {}'.format(e))
+                break
 
     def launch_monitor_terminal(self) -> None:
         """
@@ -171,33 +143,32 @@ class DutListener:
         """
         while True:
             cmd = input('sonic# ')
+            cmd = cmd.strip()
+
             if cmd in ['q', 'exit', 'quit']:
                 break
-            elif cmd in ['h', 'help', '?']:
+            elif cmd in ['', 'h', 'help', '?']:
                 print('Enter "exit/quit/q" stop this session.')
                 continue
-            elif cmd.startswith('sleep'):
+            elif not cmd.startswith('sudo'):
+                cmd = 'sudo ' + cmd
+
+            if cmd.startswith('sudo sleep'):
                 r1 = re.match(r'sleep [.]?([\d]+)', cmd)
                 if not r1:
                     print('Provide a valid value to sleep, refer time.sleep')
                     continue
             else:
                 try:
-                    stdin, stdout, stderr = self.client.exec_command(cmd)
-
-                    lines = stderr.readlines()
-                    if len(lines):
-                        for line in lines:
-                            utils.log_dbg('{}'.format(line.strip()))
-                        continue
+                    stdout = utils.run_command(self.chan, cmd)
                 except Exception as e:
                     utils.log_excp('Command execution Failed')
                     utils.log_excp('Received exception : {}'.format(e))
-                    break
+                    continue
 
                 #print(stdout.readlines())
-
-                if cmd.startswith(('udldctl', 'sudo show', 'show')):
+                watchers = []
+                if cmd.startswith(utils.show_cmd_pattern):
                     ret = utils.process_show_output(cmd, stdout)
                     if ret is None:
                         continue
@@ -205,7 +176,6 @@ class DutListener:
                         re_table, fsm_results = ret
 
                     utils.log_info('Add watchers.')
-                    watchers = []
                     while True:
                         watch_str = input('watch>> (row_list:col_list) : ')
                         if watch_str == 'end':
@@ -248,7 +218,8 @@ class DutListener:
                         # end for row in row_list
                     # end while True for watchlist
                 else:
-                    watchers = None
-            self.add_to_watch_list(cmd, val=watchers)
+                    utils.log_info("\n"+stdout)
+                utils.log_info('Watchlist : \n{}'.format(watchers))
+                self.add_to_watch_list(cmd, val=watchers)
         # End of while True
     pass
