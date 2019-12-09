@@ -11,9 +11,6 @@ import os
 
 from topo import dut_connections as dcon
 
-show_cmd_pattern = ('udldctl',
-                    'sudo show',
-                    'show')
 
 g_exec_only_mode = False
 g_check_wl_status = True
@@ -191,7 +188,7 @@ class DutListener:
                     lines = stderr.readlines()
                     if len(lines):
                         for line in lines:
-                            utils.log_err('{}'.format(line.strip()))
+                            utils.log_dbg('{}'.format(line.strip()))
                         continue
                 except Exception as e:
                     utils.log_excp('Command execution Failed')
@@ -200,7 +197,7 @@ class DutListener:
 
                 #print(stdout.readlines())
 
-                if cmd.startswith(show_cmd_pattern):
+                if cmd.startswith(('udldctl', 'sudo show', 'show')):
                     ret = utils.process_show_output(cmd, stdout)
                     if ret is None:
                         continue
@@ -208,7 +205,7 @@ class DutListener:
                         re_table, fsm_results = ret
 
                     utils.log_info('Add watchers.')
-                    watchers = None
+                    watchers = []
                     while True:
                         watch_str = input('watch>> (row_list:col_list) : ')
                         if watch_str == 'end':

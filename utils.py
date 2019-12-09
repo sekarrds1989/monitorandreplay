@@ -68,7 +68,6 @@ c_handler.setLevel(logging.DEBUG) # change to appropriate level after dev comple
 c_handler.setLevel(logging.INFO) # change to appropriate level after dev complete
 c_handler.setLevel(logging.ERROR) # change to appropriate level after dev complete
 
-f_handler.setLevel(logging.DEBUG) # change to appropriate level after dev complete
 f_handler.setLevel(logging.INFO) # change it to appropriate level
 f_handler.setLevel(logging.ERROR) # change it to appropriate level
 

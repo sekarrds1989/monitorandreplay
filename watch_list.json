@@ -1,0 +1,67 @@
+{
+
+    "D2-1": {
+        "cmd": "show vlan bri",
+        "watchers": [
+            {
+                "VID": "200"
+            }
+        ]
+    }
+,
+    "D2-2": {
+        "cmd": "udldctl port Ethernet64",
+        "watchers": [
+            {
+                "CFG_AGGR": "N",
+                "CFG_ENABLE": "Y",
+                "NBR_DEVID": "80A23581CCF0",
+                "NBR_DEVID_LEN": "12",
+                "NBR_MSGTIME": "1",
+                "NBR_PORTID": "Ethernet64",
+                "NBR_PORTID_LEN": "10",
+                "NBR_TIMEOUT": "3",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_PHASE": "ADV",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "PORT": "64"
+            }
+        ]
+    }
+,
+    "D2-3": {
+        "cmd": "",
+        "watchers": null
+    }
+,
+    "D1-1": {
+        "cmd": "show vlan bri",
+        "watchers": [
+            {
+                "VID": "300"
+            }
+        ]
+    }
+,
+    "D1-2": {
+        "cmd": "udldctl port Ethernet64",
+        "watchers": [
+            {
+                "CFG_AGGR": "N",
+                "CFG_ENABLE": "Y",
+                "NBR_DEVID": "80A23526425E",
+                "NBR_DEVID_LEN": "12",
+                "NBR_MSGTIME": "1",
+                "NBR_PORTID": "Ethernet64",
+                "NBR_PORTID_LEN": "10",
+                "NBR_TIMEOUT": "3",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_PHASE": "ADV",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "PORT": "64"
+            }
+        ]
+    }
+}
