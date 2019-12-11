@@ -5,11 +5,10 @@ setup(
     version='0.1',
     py_modules=['mr'],
     install_requires=[
-        'Click', 'paramiko'
+        'Click', 'paramiko', 'tabulate', 'textfsm'
     ],
     entry_points='''
         [console_scripts]
         yourscript=mr:monitor_replay
     ''',
 )
-

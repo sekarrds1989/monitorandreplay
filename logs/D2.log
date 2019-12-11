@@ -1,0 +1,32 @@
+
+2019-12-11 22:30:14.384117 :             CMD :: sudo systemctl restart udld.service
+2019-12-11 22:30:26.604842 :             CMD :: sudo sonic-cli -c "configure terminal" -c "no udld aggressive"
+2019-12-11 22:30:27.608575 :             CMD :: sudo sonic-cli -c "configure terminal" -c "no udld multiplier"
+2019-12-11 22:30:28.611449 :             CMD :: sudo sonic-cli -c "configure terminal" -c "no udld message-time"
+2019-12-11 22:30:29.617072 :             CMD :: sudo sonic-cli -c "configure terminal" -c "no udld enable"
+2019-12-11 22:30:31.623084 :             CMD :: sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no udld enable" -c "shutdown"
+2019-12-11 22:30:34.652746 :             CMD :: sudo udldctl global
+2019-12-11 22:30:35.658993 :            INFO :: Test D2-6 PASSED
+2019-12-11 22:30:35.659217 :             CMD :: sudo udldctl port Ethernet26
+2019-12-11 22:30:36.668071 :            INFO :: Test D2-7 PASSED
+2019-12-11 22:30:38.687356 :             CMD :: sudo udldctl global
+2019-12-11 22:30:39.693266 :            INFO :: Test D2-1 PASSED
+2019-12-11 22:30:39.693487 :             CMD :: sudo udldctl port Ethernet26
+2019-12-11 22:30:40.701978 :            INFO :: Test D2-2 PASSED
+2019-12-11 22:30:42.712033 :             CMD :: sudo sonic-cli -c "configure terminal" -c "udld enable"
+2019-12-11 22:30:43.715682 :             CMD :: sudo udldctl global
+2019-12-11 22:30:44.721212 :            INFO :: Test D2-4 PASSED
+2019-12-11 22:30:47.735423 :             CMD :: sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "udld enable"
+2019-12-11 22:30:48.740331 :             CMD :: sudo udldctl port Ethernet26
+2019-12-11 22:30:49.750448 :            INFO :: Test D2-6 PASSED
+2019-12-11 22:30:52.781593 :             CMD :: sudo udldctl global
+2019-12-11 22:30:53.790474 :            INFO :: Test D2-1 PASSED
+2019-12-11 22:30:53.790711 :             CMD :: sudo udldctl port Ethernet26
+2019-12-11 22:30:54.797077 :            INFO :: Test D2-2 PASSED
+2019-12-11 22:30:54.797334 :             CMD :: sudo show interface status Ethernet26
+2019-12-11 22:30:55.805649 :            INFO :: Test D2-3 PASSED
+2019-12-11 22:30:55.805877 :             CMD :: sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no shutdown"
+2019-12-11 22:30:56.810788 :             CMD :: sudo udldctl port Ethernet26
+2019-12-11 22:30:57.816620 :            INFO :: Test D2-5 PASSED
+2019-12-11 22:30:57.816867 :             CMD :: sudo show interface status Ethernet26
+2019-12-11 22:30:58.821619 :            INFO :: Test D2-6 PASSED

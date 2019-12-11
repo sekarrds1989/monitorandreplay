@@ -1,0 +1,17 @@
+{
+
+    "D1-1": {
+        "cmd": "sudo systemctl restart udld.service",
+        "watchers": []
+    }
+,
+    "D2-1": {
+        "cmd": "sudo systemctl restart udld.service",
+        "watchers": []
+    }
+,
+    "D1-2": {
+        "cmd": "sudo sleep 5",
+        "watchers": []
+    }
+}

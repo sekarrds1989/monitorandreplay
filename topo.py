@@ -1,3 +1,5 @@
-dut_connections = {'D1': {'ip': '10.59.136.31', 'port': '22'},
-                   'D2': {'ip': '10.59.136.32', 'port': '22'}
+dut_connections = {'D1': {'ip': '10.59.136.31'},
+                   'D2': {'ip': '10.59.136.32'}
                    }
+
+g_curr_tc_name_holder = './mr_curr_test'

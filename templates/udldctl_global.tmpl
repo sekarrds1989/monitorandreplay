@@ -1,0 +1,17 @@
+Value IS_ENABLED (Y|N)
+Value IS_AGGR (Y|N)
+Value MSG_INTV (\d+)
+Value MULTIPLIER (\d+)
+Value TIMEOUT_INTV (\d+)
+
+Start
+  ^\s*Udld Configuration\s*$$
+  ^\s*=====================\s*$$
+  ^\s*\s*$$
+  ^\s*isEnabled       : ${IS_ENABLED}\s*$$
+  ^\s*isAggressive    : ${IS_AGGR}\s*$$
+  ^\s*Message Interval: ${MSG_INTV}\s*$$
+  ^\s*Multiplier      : ${MULTIPLIER}\s*$$
+  ^\s*Timeout Interval: ${TIMEOUT_INTV}\s*$$ -> Record
+
+EOF

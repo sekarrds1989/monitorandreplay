@@ -1,0 +1,5 @@
+- mr_append >> open a existing tc_file and add new commands to it.
+- add exec mode.
+   exec show version >> should run in exec mode, should not be added to tc_file.
+
+- display Key as 1st element to watch in json file.

@@ -1,0 +1,82 @@
+{
+
+    "D1-1": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_AGGR": "N",
+                "IS_ENABLED": "N",
+                "MSG_INTV": "0",
+                "MULTIPLIER": "0",
+                "TIMEOUT_INTV": "0"
+            }
+        ]
+    }
+,
+    "D2-1": {
+    "cmd": "sudo udldctl global",
+    "watchers": [
+        {
+            "watch-key": "NA"
+        },
+        {
+            "IS_AGGR": "N",
+            "IS_ENABLED": "N",
+            "MSG_INTV": "0",
+            "MULTIPLIER": "0",
+            "TIMEOUT_INTV": "0"
+        }
+    ]
+    }
+,
+    "D1-2": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "PORT"
+            },
+            {
+                "CFG_AGGR": "N",
+                "CFG_ENABLE": "N",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_MSGTIME": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_TIMEOUT": "",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "Unknown",
+                "OPER_PHASE": "START",
+                "OPER_UDLDSTATE": "NA",
+                "PORT": "26"
+            }
+        ]
+    }
+,
+    "D2-2": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "PORT"
+            },
+            {
+                "CFG_AGGR": "N",
+                "CFG_ENABLE": "N",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_MSGTIME": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_TIMEOUT": "",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "Unknown",
+                "OPER_PHASE": "START",
+                "OPER_UDLDSTATE": "NA",
+                "PORT": "26"
+            }
+        ]
+    }
+}

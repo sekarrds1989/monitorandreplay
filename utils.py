@@ -10,6 +10,7 @@ import pdb
 import textfsm
 from tabulate import tabulate
 import time
+import re
 
 g_pdb_set = False
 
@@ -19,6 +20,34 @@ sudo_offset: int = len('sudo ')
 show_cmd_pattern = ('sudo udldctl',
                     'sudo show')
 prompt_options = ('sonic#', ':~$')
+
+
+def get_file_name(tc_name: str):
+    if tc_name.find('watch_lists/') == -1:
+        return 'watch_lists/'+tc_name+'.json'
+    return tc_name+'.json'
+
+
+def read_int_in_range(prefix_str, min_int, max_int) -> int:
+    """
+    Read a number from terminal
+
+    :param prefix_str: information printed to user
+    :param min_int: range start
+    :param max_int: range end
+    :return: number
+    """
+    while True:
+        try:
+            val = int(input(prefix_str))
+            if min_int <= val <= max_int:
+                return val
+        except Exception as e:
+            m_log_excp('Please enter a valid int in range {}-{}'.format(min_int, max_int))
+            m_log_excp('Received exception : {}'.format(e))
+            continue
+    pass
+
 
 def run_command(chan, cmd, wait_time=10):
     chan.send(cmd + '\n')
@@ -36,10 +65,37 @@ def run_command(chan, cmd, wait_time=10):
             buff = chan.recv(buff_size).decode()
             resp += buff
         except Exception as e:
-            log_excp('Exception : {}'.format(e))
+            m_log_excp('Exception : {}'.format(e))
             break
 
     return resp
+
+
+def find_template_name_for_cmd(cmd):
+    cmd = cmd.strip()
+    if cmd.startswith('sudo '):
+        cmd = cmd[len('sudo '):]
+
+    match_tmpl = ''
+    with open('cmd_template_map.txt', 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            line = line.strip()
+            if len(line) == 0:
+                continue
+
+            p_cmd = line.split('->')[0].strip()
+
+            if re.match(p_cmd, cmd):
+                match_tmpl = line.split('->')[1].strip()
+                break
+
+    if not match_tmpl:
+        m_log_debug('Template not found for cmd : {}'.format(cmd))
+    else:
+        m_log_debug('Cmd : {} => Template : {}'.format(p_cmd, match_tmpl))
+
+    return match_tmpl
 
 
 def process_show_output(cmd: str, stdout) -> tp.Tuple:
@@ -56,11 +112,10 @@ def process_show_output(cmd: str, stdout) -> tp.Tuple:
 
     """
 
-    if cmd.startswith('udldctl port'):
-        cmd_file = 'udldctl_port.tmpl'
-    else:
-        cmd = cmd[sudo_offset:]
-        cmd_file = cmd.replace(' ', '_')
+    cmd_file = find_template_name_for_cmd(cmd)
+    if not cmd_file:
+        m_log_debug('\n {}'.format(stdout))
+        return -1, -1
 
     try:
         re_table = None
@@ -73,27 +128,29 @@ def process_show_output(cmd: str, stdout) -> tp.Tuple:
             raise Exception('template file not found for {}'.format(cmd_file))
 
         fsm_results = re_table.ParseText(stdout)
-        log_info(tabulate(fsm_results, headers=re_table.header, showindex='always', tablefmt='psql'))
+        m_log_info('\n' + tabulate(fsm_results, headers=re_table.header, showindex='always', tablefmt='psql'))
     except Exception as e:
-        log_err('Template parsing Failed')
-        log_err('Received exception : {}'.format(e))
-        log_err(stdout)
-        return ()
+        m_log_err('Template parsing Failed')
+        m_log_err('Received exception : {}'.format(e))
+        m_log_err(stdout)
+        return -1, -1
     return re_table, fsm_results
 
 
 # Create a custom logger
-mr_log: logging.Logger = logging.getLogger(__name__)
+monitor_logger: logging.Logger = logging.getLogger(__name__)
+replay_logger: logging.Logger = logging.getLogger(__name__)
 
 
-def logger_init():
+def monitor_logger_init():
+    open('logs/monitor.log', 'w').close()
 
     # Create handlers
     console_handler = logging.StreamHandler()
-    file_handler    = logging.FileHandler('logs/mrlog.log')
+    file_handler    = logging.FileHandler('logs/monitor.log')
 
-    console_handler.setLevel(logging.DEBUG) # change to appropriate level after dev complete
-    file_handler.setLevel(logging.INFO) # change it to appropriate level
+    console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
+    file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
 
     # Create formatter and add it to handlers
     console_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -102,33 +159,73 @@ def logger_init():
     file_handler.setFormatter(file_format)
 
     # Add handlers to the logger
-    mr_log.addHandler(console_handler)
-    mr_log.addHandler(file_handler)
-    mr_log.setLevel(logging.DEBUG)
+    monitor_logger.addHandler(console_handler)
+    monitor_logger.addHandler(file_handler)
+    monitor_logger.setLevel(logging.DEBUG)
+
+
+def replay_logger_init():
+    open('logs/replay.log', 'w').close()
+
+    # Create handlers
+    console_handler = logging.StreamHandler()
+    file_handler    = logging.FileHandler('logs/replay.log')
+
+    console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
+    file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
+
+    # Create formatter and add it to handlers
+    console_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_format)
+    file_handler.setFormatter(file_format)
+
+    # Add handlers to the logger
+    replay_logger.addHandler(console_handler)
+    replay_logger.addHandler(file_handler)
+    replay_logger.setLevel(logging.DEBUG)
 
     """
-    this is for root logger. if we didnt create separate mr_log.
+    this is for root logger. if we didnt create separate monitor_logger.
     logging.basicConfig(level=logging.DEBUG
                         , format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
                         , handlers=[console_handler, file_handler])
     """
 
 
-def log_debug(msg: str) -> None:
-    mr_log.debug(msg)
+def m_log_debug(msg: str) -> None:
+    monitor_logger.debug(msg)
 
 
-def log_info(msg: str) -> None:
-    mr_log.info(msg)
+def m_log_info(msg: str) -> None:
+    monitor_logger.info(msg)
 
 
-def log_err(msg: str) -> None:
+def m_log_err(msg: str) -> None:
     if g_pdb_set:
         pdb.set_trace()
-    mr_log.error(msg)
+    monitor_logger.error(msg)
 
 
-def log_excp(msg: str) -> None:
+def m_log_excp(msg: str) -> None:
+    monitor_logger.exception(msg)
+
+
+def r_log_debug(msg: str) -> None:
+    replay_logger.debug(msg)
+
+
+def r_log_info(msg: str) -> None:
+    replay_logger.info(msg)
+
+
+def r_log_err(msg: str) -> None:
     if g_pdb_set:
         pdb.set_trace()
-    mr_log.exception(msg)
+    replay_logger.error(msg)
+
+
+def r_log_excp(msg: str) -> None:
+    if g_pdb_set:
+        pdb.set_trace()
+    replay_logger.exception(msg)
