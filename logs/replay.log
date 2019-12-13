@@ -1,217 +1,205 @@
-2019-12-11 22:30:03,620 - utils - DEBUG - Start Test suite : watch_lists/udld_ut_2_suite
-2019-12-11 22:30:11,301 - utils - INFO - Read commands from : watch_lists/udld_service_restart.json
-2019-12-11 22:30:11,303 - utils - INFO - #########################################
-2019-12-11 22:30:11,303 - utils - INFO - RUN Commands from watch_lists/udld_service_restart
-2019-12-11 22:30:11,303 - utils - INFO - #########################################
-2019-12-11 22:30:11,303 - utils - INFO - D1-1 : executing : sudo systemctl restart udld.service
-2019-12-11 22:30:14,383 - utils - INFO - D2-1 : executing : sudo systemctl restart udld.service
-2019-12-11 22:30:17,588 - utils - INFO - D1-2 : executing : sudo sleep 5
-2019-12-11 22:30:17,588 - utils - INFO - Sleep 5
-2019-12-11 22:30:22,589 - utils - INFO - Read commands from : watch_lists/udld_deinit.json
-2019-12-11 22:30:22,590 - utils - INFO - #########################################
-2019-12-11 22:30:22,590 - utils - INFO - RUN Commands from watch_lists/udld_deinit
-2019-12-11 22:30:22,590 - utils - INFO - #########################################
-2019-12-11 22:30:22,590 - utils - INFO - D1-1 : executing : sudo sonic-cli -c "configure terminal" -c "no udld aggressive"
-2019-12-11 22:30:23,596 - utils - INFO - D1-2 : executing : sudo sonic-cli -c "configure terminal" -c "no udld multiplier"
-2019-12-11 22:30:24,597 - utils - INFO - D1-3 : executing : sudo sonic-cli -c "configure terminal" -c "no udld message-time"
-2019-12-11 22:30:25,602 - utils - INFO - D1-4 : executing : sudo sonic-cli -c "configure terminal" -c "no udld enable"
-2019-12-11 22:30:26,604 - utils - INFO - D2-1 : executing : sudo sonic-cli -c "configure terminal" -c "no udld aggressive"
-2019-12-11 22:30:27,608 - utils - INFO - D2-2 : executing : sudo sonic-cli -c "configure terminal" -c "no udld multiplier"
-2019-12-11 22:30:28,611 - utils - INFO - D2-3 : executing : sudo sonic-cli -c "configure terminal" -c "no udld message-time"
-2019-12-11 22:30:29,616 - utils - INFO - D2-4 : executing : sudo sonic-cli -c "configure terminal" -c "no udld enable"
-2019-12-11 22:30:30,618 - utils - INFO - D1-5 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no udld enable" -c "shutdown"
-2019-12-11 22:30:31,622 - utils - INFO - D2-5 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no udld enable" -c "shutdown"
-2019-12-11 22:30:32,623 - utils - INFO - D1-6 : executing : sudo udldctl global
-2019-12-11 22:30:33,628 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:33,633 - utils - INFO - 
+2019-12-12 19:54:18,519 - utils - DEBUG - Start Test suite : watch_lists/udld_ut_2_suite
+2019-12-12 19:54:26,218 - utils - INFO - Read commands from : watch_lists/udld_service_restart.json
+2019-12-12 19:54:26,224 - utils - INFO - #########################################
+2019-12-12 19:54:26,225 - utils - INFO - RUN Commands from watch_lists/udld_service_restart
+2019-12-12 19:54:26,225 - utils - INFO - #########################################
+2019-12-12 19:54:26,225 - utils - INFO - D1-1 : executing : sudo systemctl restart udld.service
+2019-12-12 19:54:29,401 - utils - INFO - D2-1 : executing : sudo systemctl restart udld.service
+2019-12-12 19:54:32,479 - utils - INFO - D1-2 : executing : sudo sleep 5
+2019-12-12 19:54:32,479 - utils - INFO - Sleep 5
+2019-12-12 19:54:37,482 - utils - INFO - Read commands from : watch_lists/udld_deinit.json
+2019-12-12 19:54:37,489 - utils - INFO - #########################################
+2019-12-12 19:54:37,489 - utils - INFO - RUN Commands from watch_lists/udld_deinit
+2019-12-12 19:54:37,489 - utils - INFO - #########################################
+2019-12-12 19:54:37,490 - utils - INFO - D1-1 : executing : sudo sonic-cli -c "configure terminal" -c "no udld aggressive"
+2019-12-12 19:54:38,492 - utils - INFO - D1-2 : executing : sudo sonic-cli -c "configure terminal" -c "no udld multiplier"
+2019-12-12 19:54:39,494 - utils - INFO - D1-3 : executing : sudo sonic-cli -c "configure terminal" -c "no udld message-time"
+2019-12-12 19:54:40,500 - utils - INFO - D1-4 : executing : sudo sonic-cli -c "configure terminal" -c "no udld enable"
+2019-12-12 19:54:41,502 - utils - INFO - D2-1 : executing : sudo sonic-cli -c "configure terminal" -c "no udld aggressive"
+2019-12-12 19:54:42,506 - utils - INFO - D1-5 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no udld enable"
+2019-12-12 19:54:43,508 - utils - INFO - D2-2 : executing : sudo sonic-cli -c "configure terminal" -c "no udld multiplier"
+2019-12-12 19:54:44,513 - utils - INFO - D1-6 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "shutdown"
+2019-12-12 19:54:45,516 - utils - INFO - D2-3 : executing : sudo sonic-cli -c "configure terminal" -c "no udld message-time"
+2019-12-12 19:54:46,522 - utils - INFO - D2-4 : executing : sudo sonic-cli -c "configure terminal" -c "no udld enable"
+2019-12-12 19:54:47,527 - utils - INFO - D2-5 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no udld enable"
+2019-12-12 19:54:48,527 - utils - INFO - D2-6 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "shutdown"
+2019-12-12 19:54:49,531 - utils - INFO - D2-7 : executing : sudo udldctl global
+2019-12-12 19:54:50,542 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
+2019-12-12 19:54:50,545 - utils - INFO - 
 +----+--------------+-----------+------------+--------------+----------------+
 |    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
 |----+--------------+-----------+------------+--------------+----------------|
 |  0 | N            | N         |          0 |            0 |              0 |
 +----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:33,633 - utils - INFO - Test D1-6 PASSED
-2019-12-11 22:30:33,634 - utils - INFO - D1-7 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:34,640 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:34,652 - utils - INFO - 
-+----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-|    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
-|----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
-|  0 |     26 | N            | N          | DOWN           | Unknown       | NA               | START        |             |                 |              |                  |               |               |
-+----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:34,652 - utils - INFO - Test D1-7 PASSED
-2019-12-11 22:30:34,652 - utils - INFO - D2-6 : executing : sudo udldctl global
-2019-12-11 22:30:35,656 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:35,658 - utils - INFO - 
+2019-12-12 19:54:50,545 - utils - INFO - Test D2-7 PASSED
+2019-12-12 19:54:50,545 - utils - INFO - D1-7 : executing : sudo udldctl global
+2019-12-12 19:54:51,547 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
+2019-12-12 19:54:51,550 - utils - INFO - 
 +----+--------------+-----------+------------+--------------+----------------+
 |    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
 |----+--------------+-----------+------------+--------------+----------------|
 |  0 | N            | N         |          0 |            0 |              0 |
 +----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:35,659 - utils - INFO - Test D2-6 PASSED
-2019-12-11 22:30:35,659 - utils - INFO - D2-7 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:36,664 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:36,667 - utils - INFO - 
+2019-12-12 19:54:51,550 - utils - INFO - Test D1-7 PASSED
+2019-12-12 19:54:51,550 - utils - INFO - D1-8 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:54:52,552 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:54:52,564 - utils - INFO - 
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
 |    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
 |----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
-|  0 |     26 | N            | N          | DOWN           | Unknown       | NA               | START        |             |                 |              |                  |               |               |
+|  0 |     26 | N            | N          | DOWN           | NA            | NA               | START        |             |                 |              |                  |               |               |
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:36,668 - utils - INFO - Test D2-7 PASSED
-2019-12-11 22:30:36,668 - utils - INFO - Read commands from : watch_lists/udld_init_linkdown.json
-2019-12-11 22:30:36,674 - utils - INFO - #########################################
-2019-12-11 22:30:36,675 - utils - INFO - RUN Commands from watch_lists/udld_init_linkdown
-2019-12-11 22:30:36,675 - utils - INFO - #########################################
-2019-12-11 22:30:36,675 - utils - INFO - D1-1 : executing : sudo udldctl global
-2019-12-11 22:30:37,677 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:37,680 - utils - INFO - 
-+----+--------------+-----------+------------+--------------+----------------+
-|    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
-|----+--------------+-----------+------------+--------------+----------------|
-|  0 | N            | N         |          0 |            0 |              0 |
-+----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:37,680 - utils - INFO - Test D1-1 PASSED
-2019-12-11 22:30:37,680 - utils - INFO - D1-2 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:38,683 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:38,686 - utils - INFO - 
+2019-12-12 19:54:52,564 - utils - INFO - Test D1-8 PASSED
+2019-12-12 19:54:52,564 - utils - INFO - D2-8 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:54:53,570 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:54:53,574 - utils - INFO - 
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
 |    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
 |----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
-|  0 |     26 | N            | N          | DOWN           | Unknown       | NA               | START        |             |                 |              |                  |               |               |
+|  0 |     26 | N            | N          | DOWN           | NA            | NA               | START        |             |                 |              |                  |               |               |
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:38,687 - utils - INFO - Test D1-2 PASSED
-2019-12-11 22:30:38,687 - utils - INFO - D2-1 : executing : sudo udldctl global
-2019-12-11 22:30:39,690 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:39,693 - utils - INFO - 
-+----+--------------+-----------+------------+--------------+----------------+
-|    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
-|----+--------------+-----------+------------+--------------+----------------|
-|  0 | N            | N         |          0 |            0 |              0 |
-+----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:39,693 - utils - INFO - Test D2-1 PASSED
-2019-12-11 22:30:39,693 - utils - INFO - D2-2 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:40,698 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:40,701 - utils - INFO - 
-+----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-|    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
-|----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
-|  0 |     26 | N            | N          | DOWN           | Unknown       | NA               | START        |             |                 |              |                  |               |               |
-+----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:40,702 - utils - INFO - Test D2-2 PASSED
-2019-12-11 22:30:40,702 - utils - INFO - D1-3 : executing : sudo sonic-cli -c "configure terminal" -c "udld enable"
-2019-12-11 22:30:41,706 - utils - INFO - D1-4 : executing : sudo udldctl global
-2019-12-11 22:30:42,708 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:42,711 - utils - INFO - 
+2019-12-12 19:54:53,574 - utils - INFO - Test D2-8 PASSED
+2019-12-12 19:54:53,575 - utils - INFO - Read commands from : watch_lists/udld_init_linkdown.json
+2019-12-12 19:54:53,582 - utils - INFO - File Not in proper JSON format, append } at end
+2019-12-12 19:54:53,583 - utils - INFO - #########################################
+2019-12-12 19:54:53,583 - utils - INFO - RUN Commands from watch_lists/udld_init_linkdown
+2019-12-12 19:54:53,583 - utils - INFO - #########################################
+2019-12-12 19:54:53,583 - utils - INFO - D1-1 : executing : sudo sonic-cli -c "configure terminal" -c "udld enable"
+2019-12-12 19:54:54,587 - utils - INFO - D1-2 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "udld enable"
+2019-12-12 19:54:55,590 - utils - INFO - D2-1 : executing : sudo sonic-cli -c "configure terminal" -c "udld enable"
+2019-12-12 19:54:56,593 - utils - INFO - D2-2 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "udld enable"
+2019-12-12 19:54:57,597 - utils - INFO - D1-3 : executing : sudo udldctl global
+2019-12-12 19:54:58,600 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
+2019-12-12 19:54:58,602 - utils - INFO - 
 +----+--------------+-----------+------------+--------------+----------------+
 |    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
 |----+--------------+-----------+------------+--------------+----------------|
 |  0 | Y            | N         |          1 |            3 |              3 |
 +----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:42,711 - utils - INFO - Test D1-4 PASSED
-2019-12-11 22:30:42,711 - utils - INFO - D2-3 : executing : sudo sonic-cli -c "configure terminal" -c "udld enable"
-2019-12-11 22:30:43,715 - utils - INFO - D2-4 : executing : sudo udldctl global
-2019-12-11 22:30:44,718 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:44,721 - utils - INFO - 
+2019-12-12 19:54:58,603 - utils - INFO - Test D1-3 PASSED
+2019-12-12 19:54:58,603 - utils - INFO - D2-3 : executing : sudo udldctl global
+2019-12-12 19:54:59,607 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
+2019-12-12 19:54:59,611 - utils - INFO - 
 +----+--------------+-----------+------------+--------------+----------------+
 |    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
 |----+--------------+-----------+------------+--------------+----------------|
 |  0 | Y            | N         |          1 |            3 |              3 |
 +----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:44,721 - utils - INFO - Test D2-4 PASSED
-2019-12-11 22:30:44,721 - utils - INFO - D1-5 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "udld enable"
-2019-12-11 22:30:45,722 - utils - INFO - D1-6 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:46,727 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:46,731 - utils - INFO - 
+2019-12-12 19:54:59,611 - utils - INFO - Test D2-3 PASSED
+2019-12-12 19:54:59,611 - utils - INFO - D2-4 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:55:00,616 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:55:00,619 - utils - INFO - 
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
 |    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
 |----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
 |  0 |     26 | Y            | N          | DOWN           | PROBE         | INDETERM         | LINKUP       |             |                 |              |                  |               |               |
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:46,732 - utils - INFO - Test D1-6 PASSED
-2019-12-11 22:30:46,732 - utils - INFO - D1-7 : executing : sudo ls
-2019-12-11 22:30:47,735 - utils - INFO - D2-5 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "udld enable"
-2019-12-11 22:30:48,740 - utils - INFO - D2-6 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:49,746 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:49,750 - utils - INFO - 
+2019-12-12 19:55:00,619 - utils - INFO - Test D2-4 PASSED
+2019-12-12 19:55:00,619 - utils - INFO - D1-4 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:55:01,624 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:55:01,628 - utils - INFO - 
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
 |    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
 |----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
 |  0 |     26 | Y            | N          | DOWN           | PROBE         | INDETERM         | LINKUP       |             |                 |              |                  |               |               |
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:49,750 - utils - INFO - Test D2-6 PASSED
-2019-12-11 22:30:49,750 - utils - INFO - Read commands from : watch_lists/udld_init_linkdown_to_up.json
-2019-12-11 22:30:49,757 - utils - INFO - #########################################
-2019-12-11 22:30:49,757 - utils - INFO - RUN Commands from watch_lists/udld_init_linkdown_to_up
-2019-12-11 22:30:49,757 - utils - INFO - #########################################
-2019-12-11 22:30:49,757 - utils - INFO - D1-1 : executing : sudo udldctl global
-2019-12-11 22:30:50,762 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:50,764 - utils - INFO - 
-+----+--------------+-----------+------------+--------------+----------------+
-|    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
-|----+--------------+-----------+------------+--------------+----------------|
-|  0 | Y            | N         |          1 |            3 |              3 |
-+----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:50,764 - utils - INFO - Test D1-1 PASSED
-2019-12-11 22:30:50,764 - utils - INFO - D1-2 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:51,768 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:51,770 - utils - INFO - 
+2019-12-12 19:55:01,628 - utils - INFO - Test D1-4 PASSED
+2019-12-12 19:55:01,628 - utils - INFO - Read commands from : watch_lists/udld_init_linkdown_to_up.json
+2019-12-12 19:55:01,635 - utils - INFO - File Not in proper JSON format, append } at end
+2019-12-12 19:55:01,637 - utils - INFO - #########################################
+2019-12-12 19:55:01,637 - utils - INFO - RUN Commands from watch_lists/udld_init_linkdown_to_up
+2019-12-12 19:55:01,637 - utils - INFO - #########################################
+2019-12-12 19:55:01,638 - utils - INFO - D1-1 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:55:02,640 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:55:02,644 - utils - INFO - 
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
 |    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
 |----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
 |  0 |     26 | Y            | N          | DOWN           | PROBE         | INDETERM         | LINKUP       |             |                 |              |                  |               |               |
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:51,771 - utils - INFO - Test D1-2 PASSED
-2019-12-11 22:30:51,771 - utils - INFO - D1-3 : executing : sudo show interface status Ethernet26
-2019-12-11 22:30:52,772 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
-2019-12-11 22:30:52,781 - utils - INFO - 
+2019-12-12 19:55:02,645 - utils - INFO - Test D1-1 PASSED
+2019-12-12 19:55:02,645 - utils - INFO - D2-1 : executing : sudo show interface status Ethernet26
+2019-12-12 19:55:03,648 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
+2019-12-12 19:55:03,660 - utils - INFO - 
 +----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
 |    | Interface   |   Lanes | Speed   |   MTU | Alias            | Vlan   | Oper   | Admin   | Type           | AsymPFC   |
 |----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------|
 |  0 | Ethernet26  |      44 | 25G     |  9100 | twentyFiveGigE27 | routed | down   | down    | SFP/SFP+/SFP28 | N/A       |
 +----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
-2019-12-11 22:30:52,781 - utils - INFO - Test D1-3 PASSED
-2019-12-11 22:30:52,781 - utils - INFO - D2-1 : executing : sudo udldctl global
-2019-12-11 22:30:53,787 - utils - DEBUG - Cmd : udldctl global => Template : udldctl_global.tmpl
-2019-12-11 22:30:53,790 - utils - INFO - 
-+----+--------------+-----------+------------+--------------+----------------+
-|    | IS_ENABLED   | IS_AGGR   |   MSG_INTV |   MULTIPLIER |   TIMEOUT_INTV |
-|----+--------------+-----------+------------+--------------+----------------|
-|  0 | Y            | N         |          1 |            3 |              3 |
-+----+--------------+-----------+------------+--------------+----------------+
-2019-12-11 22:30:53,790 - utils - INFO - Test D2-1 PASSED
-2019-12-11 22:30:53,790 - utils - INFO - D2-2 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:54,792 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:54,796 - utils - INFO - 
-+----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-|    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
-|----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
-|  0 |     26 | Y            | N          | DOWN           | PROBE         | INDETERM         | LINKUP       |             |                 |              |                  |               |               |
-+----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:54,797 - utils - INFO - Test D2-2 PASSED
-2019-12-11 22:30:54,797 - utils - INFO - D2-3 : executing : sudo show interface status Ethernet26
-2019-12-11 22:30:55,802 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
-2019-12-11 22:30:55,805 - utils - INFO - 
+2019-12-12 19:55:03,660 - utils - INFO - Test D2-1 PASSED
+2019-12-12 19:55:03,661 - utils - INFO - D1-2 : executing : sudo show interface status Ethernet26
+2019-12-12 19:55:04,666 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
+2019-12-12 19:55:04,669 - utils - INFO - 
 +----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
 |    | Interface   |   Lanes | Speed   |   MTU | Alias            | Vlan   | Oper   | Admin   | Type           | AsymPFC   |
 |----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------|
 |  0 | Ethernet26  |      44 | 25G     |  9100 | twentyFiveGigE27 | routed | down   | down    | SFP/SFP+/SFP28 | N/A       |
 +----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
-2019-12-11 22:30:55,805 - utils - INFO - Test D2-3 PASSED
-2019-12-11 22:30:55,805 - utils - INFO - D2-4 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no shutdown"
-2019-12-11 22:30:56,810 - utils - INFO - D2-5 : executing : sudo udldctl port Ethernet26
-2019-12-11 22:30:57,812 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
-2019-12-11 22:30:57,816 - utils - INFO - 
+2019-12-12 19:55:04,669 - utils - INFO - Test D1-2 PASSED
+2019-12-12 19:55:04,669 - utils - INFO - D2-2 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:55:05,674 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:55:05,678 - utils - INFO - 
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
 |    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
 |----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
 |  0 |     26 | Y            | N          | DOWN           | PROBE         | INDETERM         | LINKUP       |             |                 |              |                  |               |               |
 +----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
-2019-12-11 22:30:57,816 - utils - INFO - Test D2-5 PASSED
-2019-12-11 22:30:57,816 - utils - INFO - D2-6 : executing : sudo show interface status Ethernet26
-2019-12-11 22:30:58,818 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
-2019-12-11 22:30:58,821 - utils - INFO - 
+2019-12-12 19:55:05,679 - utils - INFO - Test D2-2 PASSED
+2019-12-12 19:55:05,679 - utils - INFO - D1-3 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no shutdown"
+2019-12-12 19:55:06,682 - utils - INFO - D1-4 : executing : sudo show interface status Ethernet26
+2019-12-12 19:55:07,687 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
+2019-12-12 19:55:07,690 - utils - INFO - 
 +----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
 |    | Interface   |   Lanes | Speed   |   MTU | Alias            | Vlan   | Oper   | Admin   | Type           | AsymPFC   |
 |----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------|
 |  0 | Ethernet26  |      44 | 25G     |  9100 | twentyFiveGigE27 | routed | down   | up      | SFP/SFP+/SFP28 | N/A       |
 +----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
-2019-12-11 22:30:58,821 - utils - INFO - Test D2-6 PASSED
+2019-12-12 19:55:07,691 - utils - INFO - Test D1-4 PASSED
+2019-12-12 19:55:07,691 - utils - INFO - D1-5 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:55:08,692 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:55:08,695 - utils - INFO - 
++----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
+|    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID   | NBR_DEVID_LEN   | NBR_PORTID   | NBR_PORTID_LEN   | NBR_TIMEOUT   | NBR_MSGTIME   |
+|----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------|
+|  0 |     26 | Y            | N          | DOWN           | PROBE         | INDETERM         | LINKUP       |             |                 |              |                  |               |               |
++----+--------+--------------+------------+----------------+---------------+------------------+--------------+-------------+-----------------+--------------+------------------+---------------+---------------+
+2019-12-12 19:55:08,696 - utils - INFO - Test D1-5 PASSED
+2019-12-12 19:55:08,696 - utils - INFO - D2-3 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet 26" -c "no shutdown"
+2019-12-12 19:55:09,697 - utils - INFO - D2-4 : executing : sudo sleep 2
+2019-12-12 19:55:09,697 - utils - INFO - Sleep 2
+2019-12-12 19:55:11,700 - utils - INFO - D2-5 : executing : sudo show interface status Ethernet26
+2019-12-12 19:55:13,136 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
+2019-12-12 19:55:13,137 - utils - INFO - 
++----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
+|    | Interface   |   Lanes | Speed   |   MTU | Alias            | Vlan   | Oper   | Admin   | Type           | AsymPFC   |
+|----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------|
+|  0 | Ethernet26  |      44 | 25G     |  9100 | twentyFiveGigE27 | routed | up     | up      | SFP/SFP+/SFP28 | N/A       |
++----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
+2019-12-12 19:55:13,137 - utils - INFO - Test D2-5 PASSED
+2019-12-12 19:55:13,138 - utils - INFO - D2-6 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:55:14,141 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:55:14,144 - utils - INFO - 
++----+--------+--------------+------------+----------------+---------------+------------------+--------------+--------------+-----------------+--------------+------------------+---------------+---------------+
+|    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID    |   NBR_DEVID_LEN | NBR_PORTID   |   NBR_PORTID_LEN |   NBR_TIMEOUT |   NBR_MSGTIME |
+|----+--------+--------------+------------+----------------+---------------+------------------+--------------+--------------+-----------------+--------------+------------------+---------------+---------------|
+|  0 |     26 | Y            | N          | UP             | PROBE         | BI-DIR           | ADV          | 80A235260C5E |              12 | Ethernet26   |               10 |             3 |             1 |
++----+--------+--------------+------------+----------------+---------------+------------------+--------------+--------------+-----------------+--------------+------------------+---------------+---------------+
+2019-12-12 19:55:14,145 - utils - INFO - Test D2-6 PASSED
+2019-12-12 19:55:14,145 - utils - INFO - D1-6 : executing : sudo show interface status Ethernet26
+2019-12-12 19:55:15,147 - utils - DEBUG - Cmd : show interface status.* => Template : show_interface_status.tmpl
+2019-12-12 19:55:15,150 - utils - INFO - 
++----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
+|    | Interface   |   Lanes | Speed   |   MTU | Alias            | Vlan   | Oper   | Admin   | Type           | AsymPFC   |
+|----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------|
+|  0 | Ethernet26  |      44 | 25G     |  9100 | twentyFiveGigE27 | routed | up     | up      | SFP/SFP+/SFP28 | N/A       |
++----+-------------+---------+---------+-------+------------------+--------+--------+---------+----------------+-----------+
+2019-12-12 19:55:15,150 - utils - INFO - Test D1-6 PASSED
+2019-12-12 19:55:15,151 - utils - INFO - D1-7 : executing : sudo udldctl port Ethernet26
+2019-12-12 19:55:16,153 - utils - DEBUG - Cmd : udldctl port => Template : udldctl_port.tmpl
+2019-12-12 19:55:16,157 - utils - INFO - 
++----+--------+--------------+------------+----------------+---------------+------------------+--------------+--------------+-----------------+--------------+------------------+---------------+---------------+
+|    |   PORT | CFG_ENABLE   | CFG_AGGR   | OPER_LNSTATE   | OPER_OPCODE   | OPER_UDLDSTATE   | OPER_PHASE   | NBR_DEVID    |   NBR_DEVID_LEN | NBR_PORTID   |   NBR_PORTID_LEN |   NBR_TIMEOUT |   NBR_MSGTIME |
+|----+--------+--------------+------------+----------------+---------------+------------------+--------------+--------------+-----------------+--------------+------------------+---------------+---------------|
+|  0 |     26 | Y            | N          | UP             | PROBE         | BI-DIR           | ADV          | 80A235260E5E |              12 | Ethernet26   |               10 |             3 |             1 |
++----+--------+--------------+------------+----------------+---------------+------------------+--------------+--------------+-----------------+--------------+------------------+---------------+---------------+
+2019-12-12 19:55:16,158 - utils - INFO - Test D1-7 PASSED

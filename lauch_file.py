@@ -80,9 +80,9 @@ def launch_mr_replay(ctx):
     options = ctx.obj['options']
 
     if ctx.obj['tc_name']:
-        options += '--tc_name ' + ctx.obj['tc_name']
+        options += ' --tc_name ' + ctx.obj['tc_name']
     else:
-        options += '--test_suite ' + ctx.obj['test_suite']
+        options += ' --test_suite ' + ctx.obj['test_suite']
 
     with open('replay.sh', 'w') as d1bash:
         d1bash.writelines('#!/bin/bash\

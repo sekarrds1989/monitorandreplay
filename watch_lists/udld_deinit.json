@@ -25,8 +25,18 @@
         "watchers": []
     }
 ,
+    "D1-5": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D1P1_1\" -c \"no udld enable\"",
+        "watchers": []
+    }
+,
     "D2-2": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld multiplier\"",
+        "watchers": []
+    }
+,
+    "D1-6": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D1P1_1\" -c \"shutdown\"",
         "watchers": []
     }
 ,
@@ -40,25 +50,25 @@
         "watchers": []
     }
 ,
-    "D1-5": {
-        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"no udld enable\" -c \"shutdown\"",
-        "watchers": []
-    }
-,
     "D2-5": {
-        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"no udld enable\" -c \"shutdown\"",
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D2P1_1\" -c \"no udld enable\"",
         "watchers": []
     }
 ,
-    "D1-6": {
+    "D2-6": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D2P1_1\" -c \"shutdown\"",
+        "watchers": []
+    }
+,
+    "D2-7": {
         "cmd": "sudo udldctl global",
         "watchers": [
             {
                 "watch-key": "NA"
             },
             {
-                "IS_AGGR": "N",
                 "IS_ENABLED": "N",
+                "IS_AGGR": "N",
                 "MSG_INTV": "0",
                 "MULTIPLIER": "0",
                 "TIMEOUT_INTV": "0"
@@ -67,38 +77,14 @@
     }
 ,
     "D1-7": {
-        "cmd": "sudo udldctl port Ethernet26",
-        "watchers": [
-            {
-                "watch-key": "PORT"
-            },
-            {
-                "CFG_AGGR": "N",
-                "CFG_ENABLE": "N",
-                "NBR_DEVID": "",
-                "NBR_DEVID_LEN": "",
-                "NBR_MSGTIME": "",
-                "NBR_PORTID": "",
-                "NBR_PORTID_LEN": "",
-                "NBR_TIMEOUT": "",
-                "OPER_LNSTATE": "DOWN",
-                "OPER_OPCODE": "Unknown",
-                "OPER_PHASE": "START",
-                "OPER_UDLDSTATE": "NA",
-                "PORT": "26"
-            }
-        ]
-    }
-,
-    "D2-6": {
         "cmd": "sudo udldctl global",
         "watchers": [
             {
                 "watch-key": "NA"
             },
             {
-                "IS_AGGR": "N",
                 "IS_ENABLED": "N",
+                "IS_AGGR": "N",
                 "MSG_INTV": "0",
                 "MULTIPLIER": "0",
                 "TIMEOUT_INTV": "0"
@@ -106,26 +92,51 @@
         ]
     }
 ,
-    "D2-7": {
-        "cmd": "sudo udldctl port Ethernet26",
+    "D1-8": {
+        "cmd": "sudo udldctl port D1P1",
         "watchers": [
             {
-                "watch-key": "PORT"
+                "watch-key": "NA"
             },
             {
-                "CFG_AGGR": "N",
+                "PORT": "26",
                 "CFG_ENABLE": "N",
+                "CFG_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "NA",
+                "OPER_PHASE": "START",
                 "NBR_DEVID": "",
                 "NBR_DEVID_LEN": "",
-                "NBR_MSGTIME": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
                 "NBR_TIMEOUT": "",
-                "OPER_LNSTATE": "DOWN",
-                "OPER_OPCODE": "Unknown",
-                "OPER_PHASE": "START",
-                "OPER_UDLDSTATE": "NA",
-                "PORT": "26"
+                "NBR_MSGTIME": ""
             }
         ]
-    }}
+    }
+,
+    "D2-8": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "26",
+                "CFG_ENABLE": "N",
+                "CFG_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "NA",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+}

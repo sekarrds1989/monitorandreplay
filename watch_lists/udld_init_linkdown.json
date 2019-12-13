@@ -1,99 +1,34 @@
 {
 
     "D1-1": {
-        "cmd": "sudo udldctl global",
-        "watchers": [
-            {
-                "watch-key": "NA"
-            },
-            {
-                "IS_AGGR": "N",
-                "IS_ENABLED": "N",
-                "MSG_INTV": "0",
-                "MULTIPLIER": "0",
-                "TIMEOUT_INTV": "0"
-            }
-        ]
-    }
-,
-    "D1-2": {
-        "cmd": "sudo udldctl port Ethernet26",
-        "watchers": [
-            {
-                "watch-key": "PORT"
-            },
-            {
-                "CFG_AGGR": "N",
-                "CFG_ENABLE": "N",
-                "NBR_DEVID": "",
-                "NBR_DEVID_LEN": "",
-                "NBR_MSGTIME": "",
-                "NBR_PORTID": "",
-                "NBR_PORTID_LEN": "",
-                "NBR_TIMEOUT": "",
-                "OPER_LNSTATE": "DOWN",
-                "OPER_OPCODE": "Unknown",
-                "OPER_PHASE": "START",
-                "OPER_UDLDSTATE": "NA",
-                "PORT": "26"
-            }
-        ]
-    }
-,
-    "D2-1": {
-        "cmd": "sudo udldctl global",
-        "watchers": [
-            {
-                "watch-key": "NA"
-            },
-            {
-                "IS_AGGR": "N",
-                "IS_ENABLED": "N",
-                "MSG_INTV": "0",
-                "MULTIPLIER": "0",
-                "TIMEOUT_INTV": "0"
-            }
-        ]
-    }
-,
-    "D2-2": {
-        "cmd": "sudo udldctl port Ethernet26",
-        "watchers": [
-            {
-                "watch-key": "PORT"
-            },
-            {
-                "CFG_AGGR": "N",
-                "CFG_ENABLE": "N",
-                "NBR_DEVID": "",
-                "NBR_DEVID_LEN": "",
-                "NBR_MSGTIME": "",
-                "NBR_PORTID": "",
-                "NBR_PORTID_LEN": "",
-                "NBR_TIMEOUT": "",
-                "OPER_LNSTATE": "DOWN",
-                "OPER_OPCODE": "Unknown",
-                "OPER_PHASE": "START",
-                "OPER_UDLDSTATE": "NA",
-                "PORT": "26"
-            }
-        ]
-    }
-,
-    "D1-3": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld enable\"",
         "watchers": []
     }
 ,
-    "D1-4": {
+    "D1-2": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D1P1_1\" -c \"udld enable\"",
+        "watchers": []
+    }
+,
+    "D2-1": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld enable\"",
+        "watchers": []
+    }
+,
+    "D2-2": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D2P1_1\" -c \"udld enable\"",
+        "watchers": []
+    }
+,
+    "D1-3": {
         "cmd": "sudo udldctl global",
         "watchers": [
             {
                 "watch-key": "NA"
             },
             {
-                "IS_AGGR": "N",
                 "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
                 "MSG_INTV": "1",
                 "MULTIPLIER": "3",
                 "TIMEOUT_INTV": "3"
@@ -102,19 +37,14 @@
     }
 ,
     "D2-3": {
-        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld enable\"",
-        "watchers": []
-    }
-,
-    "D2-4": {
         "cmd": "sudo udldctl global",
         "watchers": [
             {
                 "watch-key": "NA"
             },
             {
-                "IS_AGGR": "N",
                 "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
                 "MSG_INTV": "1",
                 "MULTIPLIER": "3",
                 "TIMEOUT_INTV": "3"
@@ -122,65 +52,50 @@
         ]
     }
 ,
-    "D1-5": {
-        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"udld enable\"",
-        "watchers": []
-    }
-,
-    "D1-6": {
-        "cmd": "sudo udldctl port Ethernet26",
+    "D2-4": {
+        "cmd": "sudo udldctl port D2P1",
         "watchers": [
             {
-                "watch-key": "PORT"
+                "watch-key": "NA"
             },
             {
-                "CFG_AGGR": "N",
+                "PORT": "26",
                 "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
                 "NBR_DEVID": "",
                 "NBR_DEVID_LEN": "",
-                "NBR_MSGTIME": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
                 "NBR_TIMEOUT": "",
-                "OPER_LNSTATE": "DOWN",
-                "OPER_OPCODE": "PROBE",
-                "OPER_PHASE": "LINKUP",
-                "OPER_UDLDSTATE": "INDETERM",
-                "PORT": "26"
+                "NBR_MSGTIME": ""
             }
         ]
     }
 ,
-    "D1-7": {
-        "cmd": "sudo ls",
-        "watchers": []
-    }
-,
-    "D2-5": {
-        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"udld enable\"",
-        "watchers": []
-    }
-,
-    "D2-6": {
-        "cmd": "sudo udldctl port Ethernet26",
+    "D1-4": {
+        "cmd": "sudo udldctl port D1P1",
         "watchers": [
             {
-                "watch-key": "PORT"
+                "watch-key": "NA"
             },
             {
-                "CFG_AGGR": "N",
+                "PORT": "26",
                 "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
                 "NBR_DEVID": "",
                 "NBR_DEVID_LEN": "",
-                "NBR_MSGTIME": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
                 "NBR_TIMEOUT": "",
-                "OPER_LNSTATE": "DOWN",
-                "OPER_OPCODE": "PROBE",
-                "OPER_PHASE": "LINKUP",
-                "OPER_UDLDSTATE": "INDETERM",
-                "PORT": "26"
+                "NBR_MSGTIME": ""
             }
         ]
     }

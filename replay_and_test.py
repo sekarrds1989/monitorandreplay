@@ -6,9 +6,10 @@ from paramiko import AutoAddPolicy
 import sys
 import utils as utils
 import json
-from topo import dut_connections as dcon
 import datetime
 from tabulate import tabulate
+
+from topo import dut_connections as dcon
 
 """
 global watch_list data
@@ -220,6 +221,9 @@ def run_commands(wl_file) -> None:
         dc = g_dut_clients[dut_ip]
         cmd: str = val['cmd']
         watchers: typing.List = val['watchers']
+
+        watchers = json.loads(utils.replace_variables_to_dut_port_name(dut, json.dumps(watchers)))
+        cmd      = utils.replace_variables_to_dut_port_name(dut, cmd)
         r_syslog('INFO', '{} : executing : {}'.format(dut_cmdno, cmd))
 
         dc.exec_cmd(dut_cmdno, cmd, watchers)

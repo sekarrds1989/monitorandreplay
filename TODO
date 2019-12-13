@@ -1,5 +1,45 @@
-- mr_append >> open a existing tc_file and add new commands to it.
-- add exec mode.
-   exec show version >> should run in exec mode, should not be added to tc_file.
+--> provide pattern based search in show op.
+    ex:
+        "D1-2": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "PORT"
+            },
+            {
+                "CFG_AGGR": "N",
+                "CFG_ENABLE": "Y",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_MSGTIME": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_TIMEOUT": "",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_PHASE": "LINKUP",
+                "OPER_UDLDSTATE": "INDETERM",
+                "PORT": "26"                            >>>> cant be provided as a generic pattern in topo.py.
+            }
+        ]
+    }
 
-- display Key as 1st element to watch in json file.
+    to address such issue.
+    ask the user if he would like to create a new variable for that particular field check.
+    and create a new variable automatically and append to topo.py's list of variables.
+
+    also it would be better if we can provide an option to input a regex against which user would like to do a match.
+    This will help to monitor dynamically changing values like counters.
+
+--> mr_append               ::  open a existing tc_file and add new commands to it.
+--> mr_trigger              ::  trigger a external python script which might initiate a traffic send.
+--> mr_read_and_configure   ::  read line by line from a text file and execute command as if user is typing it on terminal.
+                                This will help to speed up process of json generation.
+                                If there is a show command, wait for users input to select watchers.
+
+--> change all string based search to pattern based search to match the whole word
+
+
+done - add exec mode. exec show version >> should run in exec mode, should not be added to tc_file.
+done - do not sort watchers based on key in json file. let it be as it is in the show command output order.
+done - replace dut port names with variables. helps to run automation on any device any port. Just by changing the topo.py

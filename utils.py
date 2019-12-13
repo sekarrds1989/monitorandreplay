@@ -11,6 +11,10 @@ import textfsm
 from tabulate import tabulate
 import time
 import re
+import copy
+
+from topo import dut_ports
+
 
 g_pdb_set = False
 
@@ -47,6 +51,46 @@ def read_int_in_range(prefix_str, min_int, max_int) -> int:
             m_log_excp('Received exception : {}'.format(e))
             continue
     pass
+
+
+def replace_variables_to_dut_port_name(dut, str_t):
+    """
+
+    :param dut:
+    :param str_t:
+    :return:
+
+    sort dut_ports[dut] by max key length to avoid substring overwrite problem
+    ex:
+    For 'D1': {'P1': 'Ethernet26', 'P1_1': 'Ethernet 26'},
+    D1P1 and D1P1_1 are the variable names.
+    when we search and replace in below given output it replaces interface D1P1_1 -> interface Ethernet26_1
+        "D2-1": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D1P1_1\" -c \"no shutdown\"",
+        "watchers": []
+    }
+
+    2019-12-12 14:54:17,367 - utils - INFO - D1-1 : executing : sudo sonic-cli -c "configure terminal" -c "interface Ethernet26_1" -c "no shutdown"
+
+    So sort by longest key length at 1st index.
+
+    """
+
+    p_dict = copy.deepcopy(dut_ports[dut])
+    # sorted(p_dict.items(), key=lambda s: len(s[0]), reverse=True)
+    # we can also reverse sort them by length of key, but i believe just reverse should also do the trick.
+    p_dict = dict(sorted(p_dict.items(), reverse=True))
+    if str_t:
+        for port in p_dict.keys():
+            str_t = str_t.replace(dut + port, p_dict[port])
+    return str_t
+
+
+def replace_dut_port_names_to_variables(dut, str_t):
+    if str_t:
+        for port in dut_ports[dut].keys():
+            str_t = str_t.replace(dut_ports[dut][port], dut + port)
+    return str_t
 
 
 def run_command(chan, cmd, wait_time=10):

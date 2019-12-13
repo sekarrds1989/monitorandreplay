@@ -11,7 +11,6 @@ import os
 from topo import dut_connections as dcon
 from topo import g_curr_tc_name_holder
 
-
 class DutListener:
     """
     This Class will Listen to all actions happening on the DUT.
@@ -38,14 +37,14 @@ class DutListener:
         self.client = pc.SSHClient()
         self.exec_only_mode = exec_only_mode
         self.g_cmd_no = 0
-        self.hostname = 'NA'
+        self.dut_name = 'NA'
         self.wl_file_name = test_suite+'_init.json'
         self.test_suite = test_suite
         self.contd_count = 0
 
         for dut in dcon.keys():
             if dcon[dut]['ip'] == hostip:
-                self.hostname = dut
+                self.dut_name = dut
 
         try:
             self.client.set_missing_host_key_policy(AutoAddPolicy())
@@ -71,7 +70,6 @@ class DutListener:
             self.append_file_to_suite(self.wl_file_name)
             utils.m_log_info('TC: {} file flushed out'.format(self.wl_file_name))
 
-
     def add_cmd_to_curr_wl(self, cmd: str, val: tp.List = None) -> None:
         """
          create a watch_list template.
@@ -90,8 +88,11 @@ class DutListener:
 
         self.g_cmd_no += 1
 
-        p_dict = {self.hostname + '-' + str(self.g_cmd_no): {'cmd': cmd, 'watchers': val}}
-        data = json.dumps(p_dict, sort_keys=True, indent=4)
+        cmd = utils.replace_dut_port_names_to_variables(self.dut_name, cmd)
+        val = json.loads(utils.replace_dut_port_names_to_variables(self.dut_name, json.dumps(val)))
+
+        p_dict = {self.dut_name + '-' + str(self.g_cmd_no): {'cmd': cmd, 'watchers': val}}
+        data = json.dumps(p_dict, indent=4)
 
         if os.stat(self.wl_file_name).st_size == 0:
             data = '{\n' + data[1:len(data) - 1]
@@ -99,6 +100,8 @@ class DutListener:
             data = ',' + data[1:len(data) - 1]
 
         while True:
+            # while loop might not be needed
+            # coz flock is a blocking call
             try:
                 with open(self.wl_file_name, 'a+') as f:
                     fcntl.flock(f, fcntl.LOCK_EX)
@@ -161,24 +164,28 @@ class DutListener:
         with open(g_curr_tc_name_holder, 'w') as f:
             f.writelines(fname)
 
-    def exec_and_process_output(self, cmd):
+    def exec_and_process_output(self, cmd, exec_oly=False) -> []:
         try:
             stdout = utils.run_command(self.chan, cmd)
         except Exception as e:
             utils.m_log_excp('Command execution Failed')
             utils.m_log_excp('Received exception : {}'.format(e))
-            return None
+            return []
+
+        if exec_oly:
+            print(stdout.partition('\n')[2])
+            return []
 
         watchers = []
         if cmd.startswith(utils.show_cmd_pattern):
             ret = utils.process_show_output(cmd, stdout)
             if ret == (-1, -1):
-                return None
+                return []
             else:
                 re_table, fsm_results = ret
 
             if not 'y' == input('Add watchers ? [y/n]'):
-                return None
+                return []
 
             key_col_id = utils.read_int_in_range('key column index (-1 no key): ', -1, len(re_table.header))
 
@@ -192,7 +199,7 @@ class DutListener:
                         break
                     i = i + 1
                 if invalid_key:
-                    return None
+                    return []
                 key_col_name = re_table.header[key_col_id]
             else:
                 key_col_name = 'NA'
@@ -203,20 +210,35 @@ class DutListener:
                 if col_str == '-1' and row_str == '-1':
                     break
 
-                watch_str = input('watch>> (row_list:col_list) : ')
-                if watch_str == 'end':
-                    break
-                elif watch_str.count(':') != 1:
-                    print('%Error% Invalid Input')
-                    print('FORMAT ->> row-index-list:col-index-list')
-                    print('\'end\' to stop')
-                    print('ex:')
-                    print('1,2,3::4 >> watch 4th column in rows 1,2,3')
-                    print('1,2,3::-1 >> watch all columns in rows 1,2,3')
-                    print('-1::4 >> watch 4th column in all rows')
-                    continue
+                if key_col_id == -1:
+                    col_str = '-1'
+                    row_str = input('watch>> (row_list) : ')
+                    if row_str == 'end':
+                        break
+                    elif re.match(r'[,\d]', row_str) or row_str != '-1':
+                        print('%Error% Invalid Input')
+                        print('FORMAT ->> row-index-list')
+                        print('\'end\' to stop')
+                        print('ex:')
+                        print('1,2,3 >> watch rows 1,2,3')
+                        print('-1    >> watch all rows')
+                        continue
+                else:
+                    watch_str = input('watch>> (row_list:col_list) : ')
+                    if watch_str == 'end':
+                        break
+                    elif watch_str.count(':') != 1:
+                        print('%Error% Invalid Input')
+                        print('FORMAT ->> row-index-list:col-index-list')
+                        print('\'end\' to stop')
+                        print('ex:')
+                        print('1,2,3::4 >> watch 4th column in rows 1,2,3')
+                        print('1,2,3::-1 >> watch all columns in rows 1,2,3')
+                        print('-1::4 >> watch 4th column in all rows')
+                        continue
 
-                row_str, col_str = tuple(watch_str.split(':'))
+                    row_str, col_str = tuple(watch_str.split(':'))
+
                 if row_str == '-1':
                     row_list = list(range(0, len(fsm_results)))
                 else:
@@ -270,10 +292,9 @@ class DutListener:
             # end while True for watchlist
             utils.m_log_info('Watchlist : \n{}'.format(watchers))
         else:
-            print("\n" + stdout)
+            print(stdout.partition('\n')[2])
 
         return watchers
-
 
     def launch_monitor_terminal(self) -> None:
         """
@@ -296,13 +317,15 @@ class DutListener:
 
             if cmd in ['q', 'exit', 'quit']:
                 break
+            elif cmd in ['su', 'sudo su']:
+                print('cant enter super user mode from this terminal')
+                continue
             elif cmd in ['', 'h', 'help', '?']:
                 print('exit/quit/q  - stop this session.')
-                print('mr_new <tc_name:str> - create a new watch list file')
-                print('mr_append <tc_name:str> - append to existing watch list file')
-                print('mr_run <tc_name:str> - run testcase')
+                print('mr_new    <tc_name:str> - create a new watch_list file')
+                print('mr_insert <tc_name:str> - insert a existing watch_list to be run from this point')
                 continue
-            elif cmd.startswith('mr_run '):
+            elif cmd.startswith('mr_insert '):
                 tc_name = cmd.split(' ')[1]
                 if not os.path.exists(utils.get_file_name(tc_name)):
                     print('Test case file doesnt exists')
@@ -310,19 +333,27 @@ class DutListener:
                 self.add_existing_test_case_to_suite(tc_name)
                 continue
             elif cmd.startswith('mr_new '):
+                option = ''
+                if len(cmd.split(' ')) == 3:
+                    option = cmd.split(' ')[2]
+
                 tc_name = cmd.split(' ')[1]
                 if tc_name.find('.') != -1:
                     print('file name should not have "."')
-                    print('dont type file extension')
+                    print('do not type file extension')
                 else:
-                    if os.path.exists(utils.get_file_name(tc_name)):
-                        if 'n' == input('Test case file already exists, overwrite? [y/n]').strip():
-                            continue
+                    if option != '-y':
+                        if os.path.exists(utils.get_file_name(tc_name)):
+                            if 'n' == input('Test case file already exists, overwrite? [y/n]').strip():
+                                continue
 
                     if os.stat(self.wl_file_name).st_size == 0:
                         self.remove_file_from_suite(self.wl_file_name)
                     self.wl_file_name = utils.get_file_name(tc_name)
                     self.create_new_watch_list_file(append_to_suite=True)
+                continue
+            elif cmd.startswith('ex>'):
+                self.exec_and_process_output(cmd[3:], exec_oly=True)
                 continue
 
             if not cmd.startswith('sudo'):
@@ -337,7 +368,6 @@ class DutListener:
             else:
                 watchers = self.exec_and_process_output(cmd)
 
-            if watchers is not None:
-                self.add_cmd_to_curr_wl(cmd, val=watchers)
+            self.add_cmd_to_curr_wl(cmd, val=watchers)
         # End of while True
     pass
