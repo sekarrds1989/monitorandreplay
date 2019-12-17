@@ -1,6 +1,0 @@
-{
-
-    "D1-1": {
-        "cmd": "sudo udldctl port D1P1",
-        "watchers": []
-    }

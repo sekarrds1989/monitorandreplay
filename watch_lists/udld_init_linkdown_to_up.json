@@ -7,7 +7,7 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D1P1",
                 "CFG_ENABLE": "Y",
                 "CFG_AGGR": "N",
                 "OPER_LNSTATE": "DOWN",
@@ -18,6 +18,8 @@
                 "NBR_DEVID_LEN": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
                 "NBR_TIMEOUT": "",
                 "NBR_MSGTIME": ""
             }
@@ -59,7 +61,7 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D2P1",
                 "CFG_ENABLE": "Y",
                 "CFG_AGGR": "N",
                 "OPER_LNSTATE": "DOWN",
@@ -70,6 +72,8 @@
                 "NBR_DEVID_LEN": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
                 "NBR_TIMEOUT": "",
                 "NBR_MSGTIME": ""
             }
@@ -102,7 +106,7 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D1P1",
                 "CFG_ENABLE": "Y",
                 "CFG_AGGR": "N",
                 "OPER_LNSTATE": "DOWN",
@@ -113,6 +117,8 @@
                 "NBR_DEVID_LEN": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
                 "NBR_TIMEOUT": "",
                 "NBR_MSGTIME": ""
             }
@@ -150,17 +156,19 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D2P1",
                 "CFG_ENABLE": "Y",
                 "CFG_AGGR": "N",
                 "OPER_LNSTATE": "UP",
                 "OPER_OPCODE": "PROBE",
                 "OPER_UDLDSTATE": "BI-DIR",
                 "OPER_PHASE": "ADV",
-                "NBR_DEVID": "80A235260C5E",
-                "NBR_DEVID_LEN": "12",
+                "NBR_DEVID": "80A2.3526.0C5E",
+                "NBR_DEVID_LEN": "14",
                 "NBR_PORTID": "D2P1",
                 "NBR_PORTID_LEN": "10",
+                "NBR_DEV_NAME": "sonic",
+                "NBR_DEV_NAME_LEN": "6",
                 "NBR_TIMEOUT": "3",
                 "NBR_MSGTIME": "1"
             }
@@ -188,17 +196,19 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D1P1",
                 "CFG_ENABLE": "Y",
                 "CFG_AGGR": "N",
                 "OPER_LNSTATE": "UP",
                 "OPER_OPCODE": "PROBE",
                 "OPER_UDLDSTATE": "BI-DIR",
                 "OPER_PHASE": "ADV",
-                "NBR_DEVID": "80A235260E5E",
-                "NBR_DEVID_LEN": "12",
+                "NBR_DEVID": "80A2.3526.0E5E",
+                "NBR_DEVID_LEN": "14",
                 "NBR_PORTID": "D1P1",
                 "NBR_PORTID_LEN": "10",
+                "NBR_DEV_NAME": "sonic",
+                "NBR_DEV_NAME_LEN": "6",
                 "NBR_TIMEOUT": "3",
                 "NBR_MSGTIME": "1"
             }

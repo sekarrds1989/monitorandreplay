@@ -362,7 +362,7 @@ class DutListener:
             watchers = []
             if cmd.startswith('sudo sleep'):
                 r1 = re.search(r'sudo sleep (?!$)([\d]*[.]?(?!$)[\d]*)', cmd)
-                if len(r1.groups()) != 1:
+                if not r1 or len(r1.groups()) != 1:
                     print('Provide a valid float value to sleep, refer time.sleep')
                     continue
             else:

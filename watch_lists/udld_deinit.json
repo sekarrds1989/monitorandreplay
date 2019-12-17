@@ -99,7 +99,7 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D1P1",
                 "CFG_ENABLE": "N",
                 "CFG_AGGR": "N",
                 "OPER_LNSTATE": "DOWN",
@@ -110,6 +110,8 @@
                 "NBR_DEVID_LEN": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
                 "NBR_TIMEOUT": "",
                 "NBR_MSGTIME": ""
             }
@@ -123,7 +125,7 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D2P1",
                 "CFG_ENABLE": "N",
                 "CFG_AGGR": "N",
                 "OPER_LNSTATE": "DOWN",
@@ -134,6 +136,8 @@
                 "NBR_DEVID_LEN": "",
                 "NBR_PORTID": "",
                 "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
                 "NBR_TIMEOUT": "",
                 "NBR_MSGTIME": ""
             }

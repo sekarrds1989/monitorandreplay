@@ -145,10 +145,13 @@ class DutClients:
 
                         header = ['output']
                         diff_table = [['Exp'], ['Actual']]
-                        for key in p_dict.keys():
+                        for key in exp_op.keys():
                             header.append(key)
                             diff_table[0].append(exp_op[key])
-                            diff_table[1].append(p_dict[key])
+                            try:
+                                diff_table[1].append(p_dict[key])
+                            except Exception as KeyError:
+                                diff_table[1].append('')
                         self.syslog('ERR', ' Exp Vs Actual \n {}'.format(tabulate(diff_table, headers=header
                                                                                   , showindex='always'
                                                                                   , tablefmt='psql')))
@@ -160,20 +163,24 @@ class DutClients:
 
 
 def read_commands_from_file(wl_file):
-    global g_wl_dict
-
     r_syslog('INFO', 'Read commands from : {}'.format(wl_file))
-    wl = open(wl_file, 'r')
     try:
-        g_wl_dict = json.load(wl)
-    except Exception:
-        wl.close()
-        r_syslog('INFO', 'File Not in proper JSON format, append } at end')
-        with open(wl_file, 'a') as f:
-            f.writelines('}')
-            f.close()
-        with open(wl_file, 'r') as wl:
-            g_wl_dict = json.load(wl)
+        wl = open(wl_file, 'r')
+        try:
+            wl_dict = json.load(wl)
+        except Exception:
+            wl.close()
+            r_syslog('INFO', 'File Not in proper JSON format, append } at end')
+            with open(wl_file, 'a') as f:
+                f.writelines('}')
+                f.close()
+            with open(wl_file, 'r') as wl:
+                wl_dict = json.load(wl)
+    except Exception as e:
+        r_syslog('INFO', '{} : exception {}'.format(wl_file, e))
+        return None
+
+    return wl_dict
 
 
 def start_automation(test_suite_name, tc_name='') -> None:
@@ -183,6 +190,7 @@ def start_automation(test_suite_name, tc_name='') -> None:
     :return: None
     """
     global g_dut_ip_list
+    global g_wl_dict
 
     for dut in dcon.keys():
         dc = DutClients(dut, dcon[dut]['ip'], '22', 'admin', 'broadcom')
@@ -190,8 +198,9 @@ def start_automation(test_suite_name, tc_name='') -> None:
 
     if tc_name:
         wl_file = tc_name
-        read_commands_from_file(wl_file)
-        run_commands(wl_file)
+        g_wl_dict = read_commands_from_file(wl_file)
+        if g_wl_dict is not None:
+            run_commands(wl_file)
         return
 
     with open(test_suite_name, 'r') as wl_suite:
@@ -200,9 +209,9 @@ def start_automation(test_suite_name, tc_name='') -> None:
             if wl_file == '':
                 continue
 
-            read_commands_from_file(wl_file)
-            run_commands(wl_file)
-
+            g_wl_dict = read_commands_from_file(wl_file)
+            if g_wl_dict is not None:
+                run_commands(wl_file)
     pass
 
 

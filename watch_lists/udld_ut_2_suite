@@ -1,4 +1,1 @@
-watch_lists/udld_service_restart.json
-watch_lists/udld_deinit.json
-watch_lists/udld_init_linkdown.json
-watch_lists/udld_init_linkdown_to_up.json
+watch_lists/udld_bidir_linkdown_event.json
