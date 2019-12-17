@@ -11,10 +11,20 @@ import textfsm
 from tabulate import tabulate
 import time
 import re
+import os
 import copy
+import json
+import fcntl
+import shutil
+from datetime import datetime
+import sys
 
 from topo import dut_ports
 
+
+# Create a custom logger
+monitor_logger: logging.Logger = logging.getLogger(__name__)
+replay_logger: logging.Logger = logging.getLogger(__name__)
 
 g_pdb_set = False
 
@@ -24,6 +34,110 @@ sudo_offset: int = len('sudo ')
 show_cmd_pattern = ('sudo udldctl',
                     'sudo show')
 prompt_options = ('sonic#', ':~$')
+g_runtime_variables = './rt_vars.txt'
+
+
+def create_rt_vars_file(file_comment='Vars for testsuite ABC'):
+    if os.stat(g_runtime_variables).st_size != 0:
+        try:
+            shutil.copy(g_runtime_variables, g_runtime_variables + datetime.now().__str__().replace(' ', '_'))
+        except IOError as e:
+            print("Unable to copy file. {}".format(e))
+        except Exception as e:
+            print("Unexpected error: ", sys.exc_info())
+
+    line = '{'+'\n    "comment": "{}"\n'.format(file_comment)
+    with open(g_runtime_variables, 'w') as f:
+        f.writelines(line)
+
+
+def monitor_logger_init():
+    open('logs/monitor.log', 'w').close()
+
+    # Create handlers
+    console_handler = logging.StreamHandler()
+    file_handler    = logging.FileHandler('logs/monitor.log')
+
+    console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
+    file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
+
+    # Create formatter and add it to handlers
+    console_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_format)
+    file_handler.setFormatter(file_format)
+
+    # Add handlers to the logger
+    monitor_logger.addHandler(console_handler)
+    monitor_logger.addHandler(file_handler)
+    monitor_logger.setLevel(logging.DEBUG)
+
+
+def replay_logger_init():
+    open('logs/replay.log', 'w').close()
+
+    # Create handlers
+    console_handler = logging.StreamHandler()
+    file_handler    = logging.FileHandler('logs/replay.log')
+
+    console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
+    file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
+
+    # Create formatter and add it to handlers
+    console_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_format)
+    file_handler.setFormatter(file_format)
+
+    # Add handlers to the logger
+    replay_logger.addHandler(console_handler)
+    replay_logger.addHandler(file_handler)
+    replay_logger.setLevel(logging.DEBUG)
+
+    """
+    this is for root logger. if we didnt create separate monitor_logger.
+    logging.basicConfig(level=logging.DEBUG
+                        , format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                        , handlers=[console_handler, file_handler])
+    """
+
+
+def m_log_debug(msg: str) -> None:
+    monitor_logger.debug(msg)
+
+
+def m_log_info(msg: str) -> None:
+    monitor_logger.info(msg)
+
+
+def m_log_err(msg: str) -> None:
+    if g_pdb_set:
+        pdb.set_trace()
+    monitor_logger.error(msg)
+
+
+def m_log_excp(msg: str) -> None:
+    monitor_logger.exception(msg)
+
+
+def r_log_debug(msg: str) -> None:
+    replay_logger.debug(msg)
+
+
+def r_log_info(msg: str) -> None:
+    replay_logger.info(msg)
+
+
+def r_log_err(msg: str) -> None:
+    if g_pdb_set:
+        pdb.set_trace()
+    replay_logger.error(msg)
+
+
+def r_log_excp(msg: str) -> None:
+    if g_pdb_set:
+        pdb.set_trace()
+    replay_logger.exception(msg)
 
 
 def get_file_name(tc_name: str):
@@ -181,95 +295,48 @@ def process_show_output(cmd: str, stdout) -> tp.Tuple:
     return re_table, fsm_results
 
 
-# Create a custom logger
-monitor_logger: logging.Logger = logging.getLogger(__name__)
-replay_logger: logging.Logger = logging.getLogger(__name__)
+def add_runtime_variables(header, data, nrows, ncols):
+    if nrows <= 0 or ncols <= 0:
+        return
 
+    new_vars = {}
+    while True:
+        var_name = input('variable name : ')
+        if var_name == 'end':
+            break
 
-def monitor_logger_init():
-    open('logs/monitor.log', 'w').close()
+        var_name = 'MR_RT_VAR_' + var_name
 
-    # Create handlers
-    console_handler = logging.StreamHandler()
-    file_handler    = logging.FileHandler('logs/monitor.log')
+        vars_str = ' '
+        with open(g_runtime_variables, 'r') as f:
+            lines = f.readlines()
+            lines.append('}')
+            curr_var_dict = json.loads(vars_str.join(lines))
 
-    console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
-    file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
+        if var_name in curr_var_dict.keys():
+            m_log_err('Variable name already exists, Enter new name')
+            continue
 
-    # Create formatter and add it to handlers
-    console_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(console_format)
-    file_handler.setFormatter(file_format)
+        m_log_info('Variable is located @')
+        row  = read_int_in_range('row : ', 0, nrows)
+        col  = read_int_in_range('col : ', 0, ncols)
 
-    # Add handlers to the logger
-    monitor_logger.addHandler(console_handler)
-    monitor_logger.addHandler(file_handler)
-    monitor_logger.setLevel(logging.DEBUG)
+        col_name = header[col]
 
-
-def replay_logger_init():
-    open('logs/replay.log', 'w').close()
-
-    # Create handlers
-    console_handler = logging.StreamHandler()
-    file_handler    = logging.FileHandler('logs/replay.log')
-
-    console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
-    file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
-
-    # Create formatter and add it to handlers
-    console_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(console_format)
-    file_handler.setFormatter(file_format)
-
-    # Add handlers to the logger
-    replay_logger.addHandler(console_handler)
-    replay_logger.addHandler(file_handler)
-    replay_logger.setLevel(logging.DEBUG)
-
-    """
-    this is for root logger. if we didnt create separate monitor_logger.
-    logging.basicConfig(level=logging.DEBUG
-                        , format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-                        , handlers=[console_handler, file_handler])
-    """
-
-
-def m_log_debug(msg: str) -> None:
-    monitor_logger.debug(msg)
-
-
-def m_log_info(msg: str) -> None:
-    monitor_logger.info(msg)
-
-
-def m_log_err(msg: str) -> None:
-    if g_pdb_set:
+        import pdb
         pdb.set_trace()
-    monitor_logger.error(msg)
+        var_value = data[row][col]
+        var_map_dict = {var_name: var_value}
+        new_vars[str(row)+'_'+col_name] = var_name
+        p_data = json.dumps(var_map_dict, indent=4)
+        p_data = ',' + p_data[2:-1]
 
+        with open(g_runtime_variables, 'a+') as f:
+            fcntl.flock(f, fcntl.LOCK_EX)
+            f.writelines(p_data)
+            fcntl.flock(f, fcntl.LOCK_UN)
 
-def m_log_excp(msg: str) -> None:
-    monitor_logger.exception(msg)
+        data[row][col] = var_name
 
+    return data, new_vars
 
-def r_log_debug(msg: str) -> None:
-    replay_logger.debug(msg)
-
-
-def r_log_info(msg: str) -> None:
-    replay_logger.info(msg)
-
-
-def r_log_err(msg: str) -> None:
-    if g_pdb_set:
-        pdb.set_trace()
-    replay_logger.error(msg)
-
-
-def r_log_excp(msg: str) -> None:
-    if g_pdb_set:
-        pdb.set_trace()
-    replay_logger.exception(msg)

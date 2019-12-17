@@ -3,6 +3,7 @@ from topo import dut_connections as dcon
 from topo import g_curr_tc_name_holder
 
 import click
+import utils as utils
 
 """
 This is a launcher file.
@@ -62,13 +63,19 @@ def launch_mr_monitor(ctx):
 
     open('{}_init.json'.format(ctx.obj['test_suite']), 'w').close()
     open('logs/mrlog.log', 'w').close()
+    utils.create_rt_vars_file()
+
+    if 'gdb' in options:
+        invoke_inbuilt_pdb = '-m pdb -c continue '
+    else:
+        invoke_inbuilt_pdb = ''
 
     for dut in dcon.keys():
         with open('{}_monitor.sh'.format(dut), 'w') as d1bash:
             d1bash.writelines('#!/bin/bash\
             \n\ncd /Users/dr412113/PycharmProjects/monitorandreplay\
-            \necho connect to {}\npython3.7 ./mr.py {} monitor {}\
-            \nbash\n'.format(dut, options, dcon[dut]['ip']))
+            \necho connect to {}\npython3.7 {} ./mr.py {} monitor {}\
+            \nbash\n'.format(dut, invoke_inbuilt_pdb, options, dcon[dut]['ip']))
 
         os.system('chmod +x %s_monitor.sh' % dut)
         os.system('open -a Terminal %s_monitor.sh' % dut)
@@ -84,11 +91,16 @@ def launch_mr_replay(ctx):
     else:
         options += ' --test_suite ' + ctx.obj['test_suite']
 
+    if 'gdb' in options:
+        invoke_inbuilt_pdb = '-m pdb -c continue '
+    else:
+        invoke_inbuilt_pdb = ''
+
     with open('replay.sh', 'w') as d1bash:
         d1bash.writelines('#!/bin/bash\
         \n\ncd /Users/dr412113/PycharmProjects/monitorandreplay\
-        \npython3.7 ./mr.py {} replay\
-        \nbash'.format(options))
+        \npython3.7 {} ./mr.py {} replay\
+        \nbash'.format(invoke_inbuilt_pdb, options))
     os.system('chmod +x replay.sh')
     os.system('open -a Terminal replay.sh')
 

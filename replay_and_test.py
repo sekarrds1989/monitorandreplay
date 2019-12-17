@@ -8,7 +8,7 @@ import utils as utils
 import json
 import datetime
 from tabulate import tabulate
-
+from copy import deepcopy
 from topo import dut_connections as dcon
 
 """
@@ -159,21 +159,22 @@ class DutClients:
         pass
 
 
-def read_commands_from_file(wl_file):
-    global g_wl_dict
-
+def read_json_file_as_dict(wl_file):
     r_syslog('INFO', 'Read commands from : {}'.format(wl_file))
     wl = open(wl_file, 'r')
     try:
-        g_wl_dict = json.load(wl)
+        p_dict = json.load(wl)
     except Exception:
         wl.close()
         r_syslog('INFO', 'File Not in proper JSON format, append } at end')
         with open(wl_file, 'a') as f:
             f.writelines('}')
             f.close()
+
         with open(wl_file, 'r') as wl:
-            g_wl_dict = json.load(wl)
+            p_dict = json.load(wl)
+
+    return p_dict
 
 
 def start_automation(test_suite_name, tc_name='') -> None:
@@ -188,19 +189,20 @@ def start_automation(test_suite_name, tc_name='') -> None:
         dc = DutClients(dut, dcon[dut]['ip'], '22', 'admin', 'broadcom')
         g_dut_clients[dcon[dut]['ip']] = dc
 
+    global g_wl_dict
     if tc_name:
         wl_file = tc_name
-        read_commands_from_file(wl_file)
+        g_wl_dict = read_json_file_as_dict(wl_file)
         run_commands(wl_file)
         return
 
     with open(test_suite_name, 'r') as wl_suite:
         for wl_file in wl_suite.readlines():
             wl_file = wl_file.strip()
-            if wl_file == '':
+            if wl_file == '' or wl_file.startswith('#'):
                 continue
 
-            read_commands_from_file(wl_file)
+            g_wl_dict = read_json_file_as_dict(wl_file)
             run_commands(wl_file)
 
     pass
@@ -215,17 +217,26 @@ def run_commands(wl_file) -> None:
     r_syslog('INFO', 'RUN Commands from {}'.format(wl_file[:-5]))
     r_syslog('INFO', '#########################################')
 
-    for dut_cmdno, val in g_wl_dict.items():
-        dut = dut_cmdno.split('-')[0]
+    rt_vars = read_json_file_as_dict(utils.g_runtime_variables)
+
+    for dut_cmd_no, w_val in g_wl_dict.items():
+        dut = dut_cmd_no.split('-')[0]
         dut_ip = dcon[dut]['ip']
         dc = g_dut_clients[dut_ip]
-        cmd: str = val['cmd']
-        watchers: typing.List = val['watchers']
+        cmd: str = w_val['cmd']
+        watchers: typing.List = w_val['watchers']
+
+        if len(watchers) > 1:
+            p_dict = watchers[1]
+
+            for key, val in watchers[1].items():
+                if val.startswith('MR_RT_VAR_'):
+                    p_dict[key] = rt_vars[val]
 
         watchers = json.loads(utils.replace_variables_to_dut_port_name(dut, json.dumps(watchers)))
         cmd      = utils.replace_variables_to_dut_port_name(dut, cmd)
-        r_syslog('INFO', '{} : executing : {}'.format(dut_cmdno, cmd))
+        r_syslog('INFO', '{} : executing : {}'.format(dut_cmd_no, cmd))
 
-        dc.exec_cmd(dut_cmdno, cmd, watchers)
+        dc.exec_cmd(dut_cmd_no, cmd, watchers)
 
     pass
