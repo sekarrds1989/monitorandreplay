@@ -1,0 +1,11 @@
+{
+  "udldctl global"            : "udldctl_global.tmpl",
+  "udldctl port"              : "udldctl_port.tmpl",
+  "show vlan brief"           : "show_vlan_brief.tmpl",
+  "show interface status.*"   : "show_interface_status.tmpl",
+  "show udld global"          : "show_udld_global.tmpl",
+  "show udld interface.*"     : "show_udld_interface.tmpl",
+  "show udld neighbors"       : "show_udld_nbr.tmpl",
+  "show udld statistics.*"    : "show_udld_statistics.tmpl",
+  "show hostname"             : "show_hostname.tmpl"
+}

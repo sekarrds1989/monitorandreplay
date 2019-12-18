@@ -1,0 +1,348 @@
+{
+    "D1-1": {
+        "cmd": "sudo show ver",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D2-1": {
+        "cmd": "sudo show ver",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D2-2": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D2-3": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D2P1",
+                "Oper": "down",
+                "Admin": "down"
+            }
+        ],
+        "rt_vars": {}
+    },
+    "D1-2": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D1P1",
+                "Oper": "down",
+                "Admin": "down"
+            }
+        ],
+        "rt_vars": {}
+    },
+    "D1-3": {
+        "cmd": "sudo config interface startup D1P1",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D2-4": {
+        "cmd": "sudo config interface startup",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D2-5": {
+        "cmd": "sudo config interface startup D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D1-4": {
+        "cmd": "sudo sleep 1",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D1-5": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D1P1",
+                "Oper": "up",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    },
+    "D2-6": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D2P1",
+                "Oper": "up",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    },
+    "D1-6": {
+        "cmd": "sudo debug udld dump global",
+        "watchers": [],
+        "rt_vars": {}
+    },
+    "D1-7": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "N",
+                "IS_AGGR": "N",
+                "MSG_INTV": "0",
+                "MULTIPLIER": "0",
+                "TIMEOUT_INTV": "0"
+            },
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "N",
+                "IS_AGGR": "N",
+                "MSG_INTV": "0",
+                "MULTIPLIER": "0",
+                "TIMEOUT_INTV": "0"
+            }
+        ],
+        "rt_vars": {}
+    },
+    "D2-7": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "N",
+                "IS_AGGR": "N",
+                "MSG_INTV": "0",
+                "MULTIPLIER": "0",
+                "TIMEOUT_INTV": "0"
+            }
+        ],
+        "rt_vars": {}
+    },
+    "D1-8": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D1P1",
+                "CFG_ENABLE": "N",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "NA",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    },
+    "D2-8": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D2P1",
+                "CFG_ENABLE": "N",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "NA",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    },
+
+    "D1-9": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld enable\"",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-9": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld enable\"",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-10": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-10": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-11": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D1P1_1\" -c \"udld enable\"",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-11": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D2P1_1\" -c \"udld enable\"",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-12": {
+        "cmd": "sudo sleep 3",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-12": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "MR_RT_VAR_d1p1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "OPER_PHASE": "ADV"
+            }
+        ],
+        "rt_vars": {
+            "MR_RT_VAR_d2mac": [
+                0,
+                8
+            ],
+            "MR_RT_VAR_d2maclen": [
+                0,
+                9
+            ],
+            "MR_RT_VAR_d2p1len": [
+                0,
+                11
+            ],
+            "MR_RT_VAR_d2devnamelen": [
+                0,
+                13
+            ]
+        }
+    }
+,
+
+    "D2-13": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "MR_RT_VAR_d2p1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "OPER_PHASE": "ADV"
+            }
+        ],
+        "rt_vars": {
+            "MR_RT_VAR_d1mac": [
+                0,
+                8
+            ],
+            "MR_RT_VAR_d1maclen": [
+                0,
+                9
+            ],
+            "MR_RT_VAR_d1p1len": [
+                0,
+                11
+            ],
+            "MR_RT_VAR_d1devnamelen": [
+                0,
+                13
+            ]
+        }
+    }
+,
+
+    "D2-14": {
+        "cmd": "sudo end",
+        "watchers": [],
+        "rt_vars": {}
+    }
+
+}

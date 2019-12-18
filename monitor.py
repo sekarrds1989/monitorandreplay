@@ -7,9 +7,11 @@ import fcntl
 import utils as utils
 import typing as tp
 import os
-
+import idp_generator as idp_gen
 from topo import dut_connections as dcon
 from topo import g_curr_tc_name_holder
+from topo import g_is_exisiting_tc_reopened
+
 
 class DutListener:
     """
@@ -62,6 +64,17 @@ class DutListener:
 
         pass
 
+    def open_watch_list_file_in_append_mode(self, append_to_suite, cmd_no):
+        with open(g_is_exisiting_tc_reopened, 'w') as f:
+            f.writelines('yes')
+
+        self.g_cmd_no = cmd_no
+        self.contd_count = 0
+        if append_to_suite:
+            open(self.wl_file_name, "a").close()
+            self.append_file_to_suite(self.wl_file_name)
+            utils.m_log_info('TC: {} file reopened'.format(self.wl_file_name))
+
     def create_new_watch_list_file(self, append_to_suite):
         self.g_cmd_no = 0
         self.contd_count = 0
@@ -70,39 +83,76 @@ class DutListener:
             self.append_file_to_suite(self.wl_file_name)
             utils.m_log_info('TC: {} file flushed out'.format(self.wl_file_name))
 
-    def add_cmd_to_curr_wl(self, cmd: str, val: tp.List = None) -> None:
+    def add_cmd_to_curr_wl(self, cmd: str, watchers: tp.List = None, rt_vars: tp.Dict = {}):
         """
          create a watch_list template.
          convert it to json format and append to watch_list file.
+        :param rt_vars: dynamic variables to be created from this command
         :param cmd: command string
-        :param val: list of dictionary containing which variable to be watched.
+        :param watchers: list of dictionary containing which variable to be watched.
         :return:
         """
+        with open(g_is_exisiting_tc_reopened, "rb") as f:
+            is_reopened_for_append = f.readline().strip().decode()
 
         with open(g_curr_tc_name_holder, "rb") as f:
             tc_file_name = f.readline().strip().decode()
 
-        if self.wl_file_name != tc_file_name:
+        if is_reopened_for_append == 'yes':
+            with open(g_is_exisiting_tc_reopened, 'w') as f:
+                f.writelines('no')
+
             self.wl_file_name = tc_file_name
-            self.create_new_watch_list_file(append_to_suite=False)
+            cmd_no = utils.get_max_cmd_no(tc_file_name, self.dut_name)
+            self.open_watch_list_file_in_append_mode(append_to_suite=False, cmd_no=cmd_no)
+        else:
+            if self.wl_file_name != tc_file_name:
+                self.wl_file_name = tc_file_name
+                self.create_new_watch_list_file(append_to_suite=False)
 
         self.g_cmd_no += 1
 
         cmd = utils.replace_dut_port_names_to_variables(self.dut_name, cmd)
-        val = json.loads(utils.replace_dut_port_names_to_variables(self.dut_name, json.dumps(val)))
+        watchers = json.loads(utils.replace_dut_port_names_to_variables(self.dut_name, json.dumps(watchers)))
 
-        p_dict = {self.dut_name + '-' + str(self.g_cmd_no): {'cmd': cmd, 'watchers': val}}
-        data = json.dumps(p_dict, indent=4)
+        key = self.dut_name + '-' + str(self.g_cmd_no)
+        val = {'cmd': cmd, 'watchers': watchers, 'rt_vars': rt_vars}
 
-        if os.stat(self.wl_file_name).st_size == 0:
-            data = '{\n' + data[1:len(data) - 1]
-        else:
-            data = ',' + data[1:len(data) - 1]
+        """
+        # TODO : improvise. use fseek to fetch last } and insert new command watchlist in there.
+        with open(self.wl_file_name, 'r') as f:
+            wl_dict = json.load(f)
+            wl_dict[key] = val
 
-        with open(self.wl_file_name, 'a+') as f:
+        with open(self.wl_file_name, 'w') as f:
             fcntl.flock(f, fcntl.LOCK_EX)
-            f.writelines(data)
+            json.dump(wl_dict, f)
             fcntl.flock(f, fcntl.LOCK_UN)
+        """
+
+        p_dict = {key:val}
+        with open(self.wl_file_name, "r+", encoding="utf-8") as file:
+            fcntl.flock(file, fcntl.LOCK_EX)
+            file.seek(0, os.SEEK_END)
+            pos = file.tell()
+
+            if pos == 0:
+                json.dump(p_dict, file, indent=4)
+            else:
+                while pos > 0 and file.read(1) != "}":
+                    pos -= 1
+                    file.seek(pos, os.SEEK_SET)
+
+                # So long as we're not at the start of the file, delete all the characters ahead
+                # of this position
+                if pos > 0:
+                    file.seek(pos-1, os.SEEK_SET)
+                    file.writelines(',\n' + json.dumps(p_dict, indent=4)[1:-1] + '\n}')
+                else:
+                    utils.m_log_err('{} not in JSON format\n file data : \n {}'.format(self.wl_file_name, f.readlines()))
+
+            fcntl.flock(file, fcntl.LOCK_UN)
+
         pass
 
     def remove_file_from_suite(self, fname):
@@ -197,40 +247,35 @@ class DutListener:
             else:
                 key_col_name = 'NA'
 
-            col_str = ''
-            row_str = ''
             while True:
-                if col_str == '-1' and row_str == '-1':
-                    break
-
                 if key_col_id == -1:
                     col_str = '-1'
                     row_str = input('watch>> (row_list) : ')
                     if row_str == 'end':
                         break
-                    elif re.match(r'[,\d]', row_str) or row_str != '-1':
-                        print('%Error% Invalid Input')
-                        print('FORMAT ->> row-index-list')
-                        print('\'end\' to stop')
-                        print('ex:')
-                        print('1,2,3 >> watch rows 1,2,3')
-                        print('-1    >> watch all rows')
-                        continue
                 else:
                     watch_str = input('watch>> (row_list:col_list) : ')
                     if watch_str == 'end':
                         break
                     elif watch_str.count(':') != 1:
-                        print('%Error% Invalid Input')
+                        print('%Error% Invalid Input watch_string = {}'.format(watch_str))
                         print('FORMAT ->> row-index-list:col-index-list')
                         print('\'end\' to stop')
                         print('ex:')
-                        print('1,2,3::4 >> watch 4th column in rows 1,2,3')
-                        print('1,2,3::-1 >> watch all columns in rows 1,2,3')
-                        print('-1::4 >> watch 4th column in all rows')
+                        print('1,2,3:4 >> watch 4th column in rows 1,2,3')
+                        print('1,2,3:-1 >> watch all columns in rows 1,2,3')
+                        print('-1:4 >> watch 4th column in all rows')
                         continue
-
                     row_str, col_str = tuple(watch_str.split(':'))
+
+                if not ((re.match(r'[,\d]', row_str) or row_str == '-1')
+                        and (re.match(r'[,\d]', col_str) or col_str == '-1')):
+                    print('%Error% Invalid Input row:col = {}:{}'.format(row_str, col_str))
+                    print('\'end\' to stop')
+                    print('Valid Format:')
+                    print('1,2,3 >> watch rows/cols 1,2,3')
+                    print('-1    >> watch all rows/cols')
+                    continue
 
                 if row_str == '-1':
                     row_list = list(range(0, len(fsm_results)))
@@ -281,6 +326,9 @@ class DutListener:
                         user_dict[col_name] = row_dict[col_name]
                     # end for col in col_list:
                     watchers.append(user_dict)
+
+                if row_str == '-1' and col_str == '-1':
+                    break
                 # end for row in row_list
             # end while True for watchlist
             utils.m_log_info('Watchlist : \n{}'.format(watchers))
@@ -289,33 +337,44 @@ class DutListener:
 
         return watchers
 
-    def exec_and_process_output_adv_mode(self, cmd, exec_oly=False) -> []:
+    def exec_and_process_output_adv_mode(self, cmd, exec_oly=False):
+        watchers = []
+        rt_vars = {}
+        err = watchers, rt_vars
         try:
             stdout = utils.run_command(self.chan, cmd)
         except Exception as e:
             utils.m_log_excp('Command execution Failed')
             utils.m_log_excp('Received exception : {}'.format(e))
-            return []
+            return err
 
         if exec_oly:
             print(stdout.partition('\n')[2])
-            return []
+            return err
 
-        watchers = []
         if cmd.startswith(utils.show_cmd_pattern):
             ret = utils.process_show_output(cmd, stdout)
             if ret == (-1, -1):
-                return []
+                return err
             else:
                 re_table, fsm_results = ret
 
+            if len(fsm_results) == 0:
+                return err
+
+            """
+            In Advanced mode always expect user wants to add watchers
             if not 'y' == input('Add watchers ? [y/n]'):
                 return []
+            """
+            if 'y' == input('Create new variables from output ? [y/N]'):
+                rt_vars = utils.create_rt_vars_from_output(fsm_results
+                                                 , len(fsm_results), len(re_table.header))
 
-            new_vars = {}
-            if 'y' == input('Add variables ? [y/n]'):
-                fsm_results, new_vars = utils.add_runtime_variables(re_table.header, fsm_results
-                                                                    , len(fsm_results), len(re_table.header))
+            # assign_vars = {}
+            if 'y' == input('Assign variables to output ? [y/N]'):
+                fsm_results = utils.set_rt_vars_for_output(re_table.header, fsm_results
+                                                           , len(fsm_results), len(re_table.header))
 
             key_col_id = utils.read_int_in_range('key column index (-1 no key): ', -1, len(re_table.header))
 
@@ -329,45 +388,41 @@ class DutListener:
                         break
                     i = i + 1
                 if invalid_key:
-                    return []
+                    return err
+
                 key_col_name = re_table.header[key_col_id]
             else:
                 key_col_name = 'NA'
 
-            col_str = ''
-            row_str = ''
             while True:
-                if col_str == '-1' and row_str == '-1':
-                    break
-
                 if key_col_id == -1:
                     col_str = '-1'
                     row_str = input('watch>> (row_list) : ')
                     if row_str == 'end':
                         break
-                    elif not (re.match(r'[,\d]', row_str) or row_str != '-1'):
-                        print('%Error% Invalid Input')
-                        print('FORMAT ->> row-index-list')
-                        print('\'end\' to stop')
-                        print('ex:')
-                        print('1,2,3 >> watch rows 1,2,3')
-                        print('-1    >> watch all rows')
-                        continue
                 else:
                     watch_str = input('watch>> (row_list:col_list) : ')
                     if watch_str == 'end':
                         break
                     elif watch_str.count(':') != 1:
-                        print('%Error% Invalid Input')
+                        print('%Error% Invalid Input watch_string = {}'.format(watch_str))
                         print('FORMAT ->> row-index-list:col-index-list')
                         print('\'end\' to stop')
                         print('ex:')
-                        print('1,2,3::4 >> watch 4th column in rows 1,2,3')
-                        print('1,2,3::-1 >> watch all columns in rows 1,2,3')
-                        print('-1::4 >> watch 4th column in all rows')
+                        print('1,2,3:4 >> watch 4th column in rows 1,2,3')
+                        print('1,2,3:-1 >> watch all columns in rows 1,2,3')
+                        print('-1:4 >> watch 4th column in all rows')
                         continue
-
                     row_str, col_str = tuple(watch_str.split(':'))
+
+                if not ((re.match(r'[,\d]', row_str) or row_str == '-1')
+                        and (re.match(r'[,\d]', col_str) or col_str == '-1')):
+                    print('%Error% Invalid Input row:col = {}:{}'.format(row_str, col_str))
+                    print('\'end\' to stop')
+                    print('Valid Format:')
+                    print('1,2,3 >> watch rows/cols 1,2,3')
+                    print('-1    >> watch all rows/cols')
+                    continue
 
                 if row_str == '-1':
                     row_list = list(range(0, len(fsm_results)))
@@ -415,19 +470,25 @@ class DutListener:
                         if col >= len(re_table.header):
                             continue
                         col_name = re_table.header[col]
-                        if str(row)+'_'+col_name in new_vars.keys():
-                            user_dict[col_name] = new_vars[str(row)+'_'+col_name]
+                        """
+                        if str(row)+'_'+col_name in assign_vars.keys():
+                            user_dict[col_name] = assign_vars[str(row)+'_'+col_name]
                         else:
                             user_dict[col_name] = row_dict[col_name]
+                        """
+                        user_dict[col_name] = row_dict[col_name]
                     # end for col in col_list:
                     watchers.append(user_dict)
+
+                if row_str == '-1' and col_str == '-1':
+                    break
                 # end for row in row_list
             # end while True for watchlist
             utils.m_log_info('Watchlist : \n{}'.format(watchers))
         else:
             print(stdout.partition('\n')[2])
 
-        return watchers
+        return watchers, rt_vars
 
     def launch_monitor_terminal_adv_mode(self):
         while True:
@@ -449,16 +510,16 @@ class DutListener:
                 cmd = 'sudo ' + cmd
 
             watchers = []
+            rt_vars = {}
             if cmd.startswith('sudo sleep'):
                 r1 = re.search(r'sudo sleep (?!$)([\d]*[.]?(?!$)[\d]*)', cmd)
                 if len(r1.groups()) != 1:
                     print('Provide a valid float value to sleep, refer time.sleep')
                     continue
             else:
-                watchers = self.exec_and_process_output_adv_mode(cmd)
+                watchers, rt_vars = self.exec_and_process_output_adv_mode(cmd)
 
-            self.add_cmd_to_curr_wl(cmd, val=watchers)
-
+            self.add_cmd_to_curr_wl(cmd, watchers=watchers, rt_vars=rt_vars)
 
     def launch_monitor_terminal(self) -> None:
         """
@@ -487,16 +548,29 @@ class DutListener:
             elif cmd in ['', 'h', 'help', '?']:
                 print('exit/quit/q  - stop this session.')
                 print('mr_new    <tc_name:str> - create a new watch_list file')
-                print('mr_insert <tc_name:str> - insert a existing watch_list to be run from this point')
+                print('mr_append <tc_name:str> - append to a existing watch_list file')
                 continue
             elif cmd == 'mr_adv':
                 self.launch_monitor_terminal_adv_mode()
-            elif cmd.startswith('mr_insert '):
+                continue
+            elif cmd.startswith('mr_append '):
                 tc_name = cmd.split(' ')[1]
                 if not os.path.exists(utils.get_file_name(tc_name)):
                     print('Test case file doesnt exists')
-                    continue
-                self.add_existing_test_case_to_suite(tc_name)
+                    if 'n' == input('Do you want to create one? [Y/n]'):
+                        continue
+                    if tc_name.find('.') != -1:
+                        print('file name should not have "."')
+                        print('do not type file extension')
+                        continue
+                    cmd_no = 0
+                else:
+                    cmd_no = utils.get_max_cmd_no(utils.get_file_name(tc_name), self.dut_name)
+
+                if os.stat(self.wl_file_name).st_size == 0:
+                    self.remove_file_from_suite(self.wl_file_name)
+                self.wl_file_name = utils.get_file_name(tc_name)
+                self.open_watch_list_file_in_append_mode(append_to_suite=True, cmd_no=cmd_no)
                 continue
             elif cmd.startswith('mr_new '):
                 option = ''
@@ -510,7 +584,7 @@ class DutListener:
                 else:
                     if option != '-y':
                         if os.path.exists(utils.get_file_name(tc_name)):
-                            if 'n' == input('Test case file already exists, overwrite? [y/n]').strip():
+                            if 'y' != input('Test case file already exists, overwrite? [y/N]').strip():
                                 continue
 
                     if os.stat(self.wl_file_name).st_size == 0:
@@ -518,6 +592,24 @@ class DutListener:
                     self.wl_file_name = utils.get_file_name(tc_name)
                     self.create_new_watch_list_file(append_to_suite=True)
                 continue
+            elif cmd.startswith('mr_idp '):
+                if len(cmd.split(' ')) != 2:
+                    print('Enter a valid file name')
+                    continue
+                idp_name = cmd.split(' ')[1]
+                if len(idp_name) == 0:
+                    print('No file name given as input. Enter a valid file name')
+                    continue
+                if not idp_name.endswith('.py'):
+                    idp_name = idp_name + '.py'
+
+                if os.path.exists(idp_name):
+                    if 'n' == input('file already exists, overwrite? [y/n]').strip():
+                        continue
+
+                idp_gen.generate_idp_file(idp_name)
+                continue
+
             elif cmd.startswith('ex>'):
                 self.exec_and_process_output(cmd[3:], exec_oly=True)
                 continue
@@ -534,6 +626,7 @@ class DutListener:
             else:
                 watchers = self.exec_and_process_output(cmd)
 
-            self.add_cmd_to_curr_wl(cmd, val=watchers)
+            self.add_cmd_to_curr_wl(cmd, watchers=watchers)
         # End of while True
+
     pass

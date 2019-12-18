@@ -1,0 +1,27 @@
+{
+
+    "D2-1": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D2P1",
+                "Oper": "down",
+                "Admin": "down"
+            }
+        ],
+        "rt_vars": {
+            "MR_RT_VAR_d1p1": [
+                0,
+                0
+            ]
+        }
+    }
+,
+    "D1-1": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [],
+        "rt_vars": null
+    }

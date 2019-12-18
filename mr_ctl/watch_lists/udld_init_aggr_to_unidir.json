@@ -1,0 +1,11 @@
+{
+
+    "D1-1": {
+        "cmd": "sudo show interface status Ethernet26",
+        "watchers": []
+    }
+,
+    "D1-2": {
+        "cmd": "sudo show interface status Ethernet26",
+        "watchers": []
+    }

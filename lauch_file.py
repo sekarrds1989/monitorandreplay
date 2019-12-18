@@ -1,6 +1,7 @@
 import os
 from topo import dut_connections as dcon
 from topo import g_curr_tc_name_holder
+import topo
 
 import click
 import utils as utils
@@ -51,18 +52,22 @@ def launch_mr_monitor(ctx):
     options += ' --test_suite ' + ctx.obj['test_suite']
 
     if os.path.exists(ctx.obj['test_suite']):
+        if os.path.isdir(ctx.obj['test_suite']):
+            print('{} is a directory'.format(ctx.obj['test_suite']))
+            exit(1)
         if 'n' == input('Test Suite already exists, overwrite? [y/n]').strip():
             exit(1)
 
+    os.makedirs(os.path.dirname(ctx.obj['test_suite']), exist_ok=True)
     with open(ctx.obj['test_suite'], 'w') as f:
-        fname = '{}_init.json'.format(ctx.obj['test_suite'])
+        suite_name = '{}_init.json'.format(ctx.obj['test_suite'])
         f.writelines('\n')  # start with \n for simplifiying last line read
-        f.writelines(fname)
+        f.writelines(suite_name)
     with open(g_curr_tc_name_holder, 'w') as f:
-        f.writelines(fname)
+        f.writelines(suite_name)
 
     open('{}_init.json'.format(ctx.obj['test_suite']), 'w').close()
-    open('logs/mrlog.log', 'w').close()
+    open(topo.logs_dir+'mrlog.log', 'w').close()
     utils.create_rt_vars_file()
 
     if 'gdb' in options:
@@ -71,14 +76,14 @@ def launch_mr_monitor(ctx):
         invoke_inbuilt_pdb = ''
 
     for dut in dcon.keys():
-        with open('{}_monitor.sh'.format(dut), 'w') as d1bash:
+        with open('{}_monitor.sh'.format(topo.mr_ctl_dir+dut), 'w') as d1bash:
             d1bash.writelines('#!/bin/bash\
             \n\ncd /Users/dr412113/PycharmProjects/monitorandreplay\
             \necho connect to {}\npython3.7 {} ./mr.py {} monitor {}\
             \nbash\n'.format(dut, invoke_inbuilt_pdb, options, dcon[dut]['ip']))
 
-        os.system('chmod +x %s_monitor.sh' % dut)
-        os.system('open -a Terminal %s_monitor.sh' % dut)
+        os.system('chmod +x {}_monitor.sh'.format(topo.mr_ctl_dir+dut))
+        os.system('open -a Terminal {}_monitor.sh'.format(topo.mr_ctl_dir+dut))
 
 
 @launch_mr.command('replay')
@@ -96,13 +101,13 @@ def launch_mr_replay(ctx):
     else:
         invoke_inbuilt_pdb = ''
 
-    with open('replay.sh', 'w') as d1bash:
+    with open('{}replay.sh'.format(topo.mr_ctl_dir), 'w') as d1bash:
         d1bash.writelines('#!/bin/bash\
         \n\ncd /Users/dr412113/PycharmProjects/monitorandreplay\
         \npython3.7 {} ./mr.py {} replay\
         \nbash'.format(invoke_inbuilt_pdb, options))
-    os.system('chmod +x replay.sh')
-    os.system('open -a Terminal replay.sh')
+    os.system('chmod +x {}replay.sh'.format(topo.mr_ctl_dir))
+    os.system('open -a Terminal {}replay.sh'.format(topo.mr_ctl_dir))
 
 
 if __name__ == '__main__':

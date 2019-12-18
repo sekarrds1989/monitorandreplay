@@ -1,0 +1,508 @@
+{
+    "D1-1": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-1": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-2": {
+        "cmd": "sudo udldctl rx_drop enable D1P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-3": {
+        "cmd": "sudo sleep 5",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-4": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "PORT"
+            },
+            {
+                "PORT": "D1P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-2": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D2P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "SHUT",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-3": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D2P1",
+                "Oper": "down",
+                "Admin": "down"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-5": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D1P1",
+                "Oper": "down",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-6": {
+        "cmd": "sudo udldctl rx_drop disable D1P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-7": {
+        "cmd": "sudo sleep 3",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-4": {
+        "cmd": "sudo config interface startup D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-5": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D2P1",
+                "Oper": "up",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-9": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D1P1",
+                "Oper": "up",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    },
+
+    "D1-10": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D1P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "OPER_PHASE": "ADV",
+                "NBR_DEVID": "MR_RT_VAR_d2mac",
+                "NBR_DEVID_LEN": "MR_RT_VAR_d2maclen",
+                "NBR_PORTID": "MR_RT_VAR_d2p1",
+                "NBR_PORTID_LEN": "MR_RT_VAR_d2p1len",
+                "NBR_DEV_NAME": "MR_RT_VAR_d2devname",
+                "NBR_DEV_NAME_LEN": "MR_RT_VAR_d2devnamelen",
+                "NBR_TIMEOUT": "3",
+                "NBR_MSGTIME": "1"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-6": {
+        "cmd": "sudo udldctl rx_drop enable D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-7": {
+        "cmd": "sudo sleep 5",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-8": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D2P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-11": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D1P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "SHUT",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-12": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-13": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D1P1",
+                "Oper": "down",
+                "Admin": "down"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-9": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D2P1",
+                "Oper": "down",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-10": {
+        "cmd": "sudo udldctl rx_drop disable D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-11": {
+        "cmd": "sudo sleep 3",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-12": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-13": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D2P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-14": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D1P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "SHUT",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-15": {
+        "cmd": "sudo config interface startup D1P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-16": {
+        "cmd": "sudo sleep 3",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D1-17": {
+        "cmd": "sudo show interface status D1P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D1P1",
+                "Oper": "up",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-14": {
+        "cmd": "sudo shwo interface status D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+
+    "D2-15": {
+        "cmd": "sudo show interface status D2P1",
+        "watchers": [
+            {
+                "watch-key": "Interface"
+            },
+            {
+                "Interface": "D2P1",
+                "Oper": "up",
+                "Admin": "up"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-18": {
+        "cmd": "sudo udldctl port D1P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D1P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "OPER_PHASE": "ADV",
+                "NBR_DEVID": "MR_RT_VAR_d2mac",
+                "NBR_DEVID_LEN": "MR_RT_VAR_d2maclen",
+                "NBR_PORTID": "MR_RT_VAR_d2p1",
+                "NBR_PORTID_LEN": "MR_RT_VAR_d2p1len",
+                "NBR_DEV_NAME": "MR_RT_VAR_d2devname",
+                "NBR_DEV_NAME_LEN": "MR_RT_VAR_d2devnamelen",
+                "NBR_TIMEOUT": "3",
+                "NBR_MSGTIME": "1"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D2-16": {
+        "cmd": "sudo udldctl port D2P1",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "D2P1",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "OPER_PHASE": "ADV",
+                "NBR_DEVID": "MR_RT_VAR_d1mac",
+                "NBR_DEVID_LEN": "MR_RT_VAR_d1maclen",
+                "NBR_PORTID": "MR_RT_VAR_d1p1",
+                "NBR_PORTID_LEN": "MR_RT_VAR_d1p1len",
+                "NBR_DEV_NAME": "MR_RT_VAR_d1devname",
+                "NBR_DEV_NAME_LEN": "MR_RT_VAR_d1devnamelen",
+                "NBR_TIMEOUT": "3",
+                "NBR_MSGTIME": "1"
+            }
+        ],
+        "rt_vars": {}
+    }
+,
+
+    "D1-19": {
+        "cmd": "sudo mr_idp ../test_mr/tc3/udld_tc3.py",
+        "watchers": [],
+        "rt_vars": {}
+    }
+
+}

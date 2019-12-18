@@ -18,8 +18,10 @@ import fcntl
 import shutil
 from datetime import datetime
 import sys
+import difflib
 
 from topo import dut_ports
+import topo
 
 
 # Create a custom logger
@@ -34,29 +36,35 @@ sudo_offset: int = len('sudo ')
 show_cmd_pattern = ('sudo udldctl',
                     'sudo show')
 prompt_options = ('sonic#', ':~$')
-g_runtime_variables = './rt_vars.txt'
+g_runtime_variables = topo.g_rt_vars_file
 
 
-def create_rt_vars_file(file_comment='Vars for testsuite ABC'):
-    if os.stat(g_runtime_variables).st_size != 0:
+def backup_rt_vars_file(file_name):
+    if os._exists(file_name) and os.stat(file_name).st_size != 0:
         try:
-            shutil.copy(g_runtime_variables, g_runtime_variables + datetime.now().__str__().replace(' ', '_'))
+            shutil.copy(file_name, file_name + datetime.now().__str__().replace(' ', '_'))
         except IOError as e:
             print("Unable to copy file. {}".format(e))
         except Exception as e:
             print("Unexpected error: ", sys.exc_info())
 
+
+def create_rt_vars_file():
+    backup_rt_vars_file(g_runtime_variables)
+    open(g_runtime_variables, 'w').close()
+    """
     line = '{'+'\n    "comment": "{}"\n'.format(file_comment)
     with open(g_runtime_variables, 'w') as f:
         f.writelines(line)
+    """
 
 
 def monitor_logger_init():
-    open('logs/monitor.log', 'w').close()
+    open(topo.logs_dir+'monitor.log', 'w').close()
 
     # Create handlers
     console_handler = logging.StreamHandler()
-    file_handler    = logging.FileHandler('logs/monitor.log')
+    file_handler    = logging.FileHandler(topo.logs_dir+'monitor.log')
 
     console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
     file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
@@ -74,11 +82,11 @@ def monitor_logger_init():
 
 
 def replay_logger_init():
-    open('logs/replay.log', 'w').close()
+    open(topo.logs_dir+'replay.log', 'w').close()
 
     # Create handlers
     console_handler = logging.StreamHandler()
-    file_handler    = logging.FileHandler('logs/replay.log')
+    file_handler    = logging.FileHandler(topo.logs_dir+'replay.log')
 
     console_handler.setLevel(logging.DEBUG)  # change to appropriate level after dev complete
     file_handler.setLevel(logging.DEBUG)  # change it to appropriate level
@@ -141,9 +149,61 @@ def r_log_excp(msg: str) -> None:
 
 
 def get_file_name(tc_name: str):
-    if tc_name.find('watch_lists/') == -1:
-        return 'watch_lists/'+tc_name+'.json'
+    if tc_name.find(topo.wl_dir) == -1:
+        return topo.wl_dir+tc_name+'.json'
     return tc_name+'.json'
+
+
+def get_max_cmd_no(f_name, dut_name):
+    p_dict = read_json_file_as_dict(f_name)
+    if p_dict is None or len(p_dict.keys()) == 0:
+        return 0
+
+    max_cmd_no = -1
+    for key in p_dict.keys():
+        if key.startswith(dut_name):
+            cmd_no = int(key[len(dut_name+'-'):])
+            if cmd_no > max_cmd_no:
+                max_cmd_no = cmd_no
+
+    return max_cmd_no
+
+
+def read_json_file_as_dict(wl_file):
+    """
+    r_log_info('Read commands from : {}'.format(wl_file))
+    wl = open(wl_file, 'r')
+    try:
+        p_dict = json.load(wl)
+    except Exception:
+        wl.close()
+        r_log_err('File Not in proper JSON format, append } at end')
+        with open(wl_file, 'a') as f:
+            f.writelines('}')
+            f.close()
+
+        try:
+            with open(wl_file, 'r') as wl:
+                p_dict = json.load(wl)
+        except Exception:
+            r_log_err('failed to read {}'.format(wl_file))
+            p_dict = None
+
+    """
+    # r_log_info('Read commands from : {}'.format(wl_file))
+    if os.stat(wl_file).st_size == 0:
+        return {}
+
+    with open(wl_file, 'r') as wl:
+        try:
+            p_dict = json.load(wl)
+        except json.JSONDecodeError:
+            p_dict = None
+            r_log_err('File Not in proper JSON format')
+
+    return p_dict
+
+
 
 
 def read_int_in_range(prefix_str, min_int, max_int) -> int:
@@ -235,23 +295,17 @@ def find_template_name_for_cmd(cmd):
         cmd = cmd[len('sudo '):]
 
     match_tmpl = ''
-    with open('cmd_template_map.txt', 'r') as f:
-        lines = f.readlines()
-        for line in lines:
-            line = line.strip()
-            if len(line) == 0:
-                continue
-
-            p_cmd = line.split('->')[0].strip()
-
-            if re.match(p_cmd, cmd):
-                match_tmpl = line.split('->')[1].strip()
+    with open(topo.cmd_to_template_map, 'r') as f:
+        p_dict = json.load(f)
+        for key in p_dict.keys():
+            if re.match(key, cmd):
+                match_tmpl = p_dict[key]
                 break
 
     if not match_tmpl:
         m_log_debug('Template not found for cmd : {}'.format(cmd))
     else:
-        m_log_debug('Cmd : {} => Template : {}'.format(p_cmd, match_tmpl))
+        m_log_debug('Cmd : {} => Template : {}'.format(cmd, match_tmpl))
 
     return match_tmpl
 
@@ -277,7 +331,7 @@ def process_show_output(cmd: str, stdout) -> tp.Tuple:
 
     try:
         re_table = None
-        for f in glob.glob('./templates/*.tmpl'):
+        for f in glob.glob(topo.templates_dir+'*.tmpl'):
             if cmd_file in f:
                 template = open(f)
                 re_table = textfsm.TextFSM(template)
@@ -286,7 +340,8 @@ def process_show_output(cmd: str, stdout) -> tp.Tuple:
             raise Exception('template file not found for {}'.format(cmd_file))
 
         fsm_results = re_table.ParseText(stdout)
-        m_log_info('\n' + tabulate(fsm_results, headers=re_table.header, showindex='always', tablefmt='psql'))
+        header = ['({}) '.format(col_id)+col_name for col_id, col_name in enumerate(re_table.header)]
+        m_log_info('\n' + tabulate(fsm_results, headers=header, showindex='always', tablefmt='psql'))
     except Exception as e:
         m_log_err('Template parsing Failed')
         m_log_err('Received exception : {}'.format(e))
@@ -295,11 +350,30 @@ def process_show_output(cmd: str, stdout) -> tp.Tuple:
     return re_table, fsm_results
 
 
-def add_runtime_variables(header, data, nrows, ncols):
+def add_new_rt_var_into_file(var_name, var_value, in_replay_ctx):
+    curr_var_dict = read_json_file_as_dict(g_runtime_variables)
+
+    if not in_replay_ctx:
+        if var_name in curr_var_dict.keys():
+            print('Variable name already exists, Enter new name')
+            if 'y' != input('do you want to overwrite it? [y/n]'):
+                return
+
+    curr_var_dict[var_name] = var_value
+    with open(g_runtime_variables, 'w') as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        json.dump(curr_var_dict, f, indent=4)
+        fcntl.flock(f, fcntl.LOCK_UN)
+    m_log_info('Created variable {} = {}'.format(var_name, var_value))
+
+
+def create_rt_vars_from_output(data, nrows, ncols):
+
+    temp_data = copy.deepcopy(data)
     if nrows <= 0 or ncols <= 0:
         return
 
-    new_vars = {}
+    rt_vars = {}
     while True:
         var_name = input('variable name : ')
         if var_name == 'end':
@@ -307,24 +381,49 @@ def add_runtime_variables(header, data, nrows, ncols):
 
         var_name = 'MR_RT_VAR_' + var_name
 
-        vars_str = ' '
-        with open(g_runtime_variables, 'r') as f:
-            lines = f.readlines()
-            lines.append('}')
-            curr_var_dict = json.loads(vars_str.join(lines))
+        m_log_info('Variable is located at')
+        row  = read_int_in_range('row : ', 0, nrows)
+        col  = read_int_in_range('col : ', 0, ncols)
 
-        if var_name in curr_var_dict.keys():
-            m_log_err('Variable name already exists, Enter new name')
+        var_value = temp_data[row][col]
+
+        add_new_rt_var_into_file(var_name, var_value, False)
+
+        rt_vars[var_name] = (row, col)
+
+    return rt_vars
+
+
+def set_rt_vars_for_output(header, data, nrows, ncols):
+    if nrows <= 0 or ncols <= 0:
+        return
+
+    # new_vars = {}
+    while True:
+        var_name = input('variable name [type "end" to stop] : ')
+        if var_name == 'end':
+            break
+
+        var_name = 'MR_RT_VAR_' + var_name
+
+        with open(g_runtime_variables, 'r') as f:
+            try:
+                curr_var_dict = json.load(f)
+            except json.JSONDecodeError:
+                print('File not in JSON format. \nfile data : {}'.format(f.readlines()))
+                continue
+
+        if var_name not in curr_var_dict.keys():
+            print('Variable doesnt exist')
+            print('closest possible matches : \n {}'.format(difflib.get_close_matches(var_name, curr_var_dict.keys())))
             continue
 
         m_log_info('Variable is located @')
         row  = read_int_in_range('row : ', 0, nrows)
         col  = read_int_in_range('col : ', 0, ncols)
-
+        """
         col_name = header[col]
 
-        import pdb
-        pdb.set_trace()
         var_value = data[row][col]
         var_map_dict = {var_name: var_value}
         new_vars[str(row)+'_'+col_name] = var_name
@@ -333,10 +432,13 @@ def add_runtime_variables(header, data, nrows, ncols):
 
         with open(g_runtime_variables, 'a+') as f:
             fcntl.flock(f, fcntl.LOCK_EX)
+            m_log_info('{}'.format(var_map_dict))
             f.writelines(p_data)
             fcntl.flock(f, fcntl.LOCK_UN)
-
+        
+        new_vars[str(row)+'_'+col_name] = var_name
+        """
         data[row][col] = var_name
 
-    return data, new_vars
+    return data
 

@@ -1,63 +1,86 @@
 {
-
+    "D1-0": {
+        "cmd": "sudo udldctl rx_drop disable D1P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
+    "D2-0": {
+        "cmd": "sudo udldctl rx_drop disable D2P1",
+        "watchers": [],
+        "rt_vars": {}
+    }
+,
     "D1-1": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld aggressive\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D1-2": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld multiplier\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D1-3": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld message-time\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D1-4": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld enable\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D2-1": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld aggressive\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D1-5": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D1P1_1\" -c \"no udld enable\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D2-2": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld multiplier\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D1-6": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D1P1_1\" -c \"shutdown\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D2-3": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld message-time\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D2-4": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld enable\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D2-5": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D2P1_1\" -c \"no udld enable\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D2-6": {
         "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface D2P1_1\" -c \"shutdown\"",
-        "watchers": []
+        "watchers": [],
+        "rt_vars": {}
     }
 ,
     "D2-7": {
@@ -73,7 +96,8 @@
                 "MULTIPLIER": "0",
                 "TIMEOUT_INTV": "0"
             }
-        ]
+        ],
+        "rt_vars": {}
     }
 ,
     "D1-7": {
@@ -89,7 +113,8 @@
                 "MULTIPLIER": "0",
                 "TIMEOUT_INTV": "0"
             }
-        ]
+        ],
+        "rt_vars": {}
     }
 ,
     "D1-8": {
@@ -99,9 +124,10 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D1P1",
                 "CFG_ENABLE": "N",
                 "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
                 "OPER_LNSTATE": "DOWN",
                 "OPER_OPCODE": "NA",
                 "OPER_UDLDSTATE": "NA",
@@ -113,7 +139,8 @@
                 "NBR_TIMEOUT": "",
                 "NBR_MSGTIME": ""
             }
-        ]
+        ],
+        "rt_vars": {}
     }
 ,
     "D2-8": {
@@ -123,9 +150,10 @@
                 "watch-key": "NA"
             },
             {
-                "PORT": "26",
+                "PORT": "D2P1",
                 "CFG_ENABLE": "N",
                 "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
                 "OPER_LNSTATE": "DOWN",
                 "OPER_OPCODE": "NA",
                 "OPER_UDLDSTATE": "NA",
@@ -137,6 +165,7 @@
                 "NBR_TIMEOUT": "",
                 "NBR_MSGTIME": ""
             }
-        ]
+        ],
+        "rt_vars": {}
     }
 }

@@ -4,12 +4,12 @@ from time import sleep
 import paramiko.client as pc
 from paramiko import AutoAddPolicy
 import sys
-import utils as utils
 import json
 import datetime
 from tabulate import tabulate
-from copy import deepcopy
+import utils as utils
 from topo import dut_connections as dcon
+import topo
 
 """
 global watch_list data
@@ -25,16 +25,10 @@ Ex::-
     }
 }
 """
-g_wl_dict: typing.Dict[typing.Any, typing.Any] = {}
-"""
-List of DUTs
-"""
-g_dut_ip_list: typing.List[typing.Any] = []
 """
 ssh client object dictionary
 each dut will have a client obj
 """
-g_ssh_client_dict: typing.Dict[typing.Any, typing.Any] = {}
 g_dut_clients: typing.Dict = {}
 
 
@@ -52,7 +46,7 @@ class DutClients:
         self.hostip = hostip
         self.port = port
         self.dut_name = dut_name
-        self.log_file = open('logs/' + dut_name + '.log', 'w')
+        self.log_file = open(topo.logs_dir + dut_name + '.log', 'w')
 
         try:
             self.client = pc.SSHClient()
@@ -84,7 +78,7 @@ class DutClients:
         self.syslog('ERR', 'Aborting Test')
         sys.exit(1)
 
-    def exec_cmd(self, tc_id, cmd, exp_op_list):
+    def exec_cmd(self, tc_id, cmd, exp_op_list, create_rt_vars):
         self.syslog('CMD', cmd)
 
         if cmd.startswith('sudo sleep'):
@@ -110,6 +104,11 @@ class DutClients:
                 return
             else:
                 re_table, fsm_results = ret
+
+            if create_rt_vars and len(create_rt_vars.keys()) != 0:
+                for key in create_rt_vars.keys():
+                    row, col = create_rt_vars[key]
+                    utils.add_new_rt_var_into_file(key, fsm_results[row][col], True)
 
             key_col_name = ''
             for exp_op in exp_op_list:
@@ -147,7 +146,10 @@ class DutClients:
                         diff_table = [['Exp'], ['Actual']]
                         for key in p_dict.keys():
                             header.append(key)
-                            diff_table[0].append(exp_op[key])
+                            try:
+                                diff_table[0].append(exp_op[key])
+                            except KeyError:
+                                diff_table[0].append('')
                             diff_table[1].append(p_dict[key])
                         self.syslog('ERR', ' Exp Vs Actual \n {}'.format(tabulate(diff_table, headers=header
                                                                                   , showindex='always'
@@ -159,84 +161,80 @@ class DutClients:
         pass
 
 
-def read_json_file_as_dict(wl_file):
-    r_syslog('INFO', 'Read commands from : {}'.format(wl_file))
-    wl = open(wl_file, 'r')
-    try:
-        p_dict = json.load(wl)
-    except Exception:
-        wl.close()
-        r_syslog('INFO', 'File Not in proper JSON format, append } at end')
-        with open(wl_file, 'a') as f:
-            f.writelines('}')
-            f.close()
-
-        with open(wl_file, 'r') as wl:
-            p_dict = json.load(wl)
-
-    return p_dict
-
-
 def start_automation(test_suite_name, tc_name='') -> None:
     """
     Read watch_list file and create all required ssh sessions.
 
     :return: None
     """
-    global g_dut_ip_list
-
     for dut in dcon.keys():
         dc = DutClients(dut, dcon[dut]['ip'], '22', 'admin', 'broadcom')
         g_dut_clients[dcon[dut]['ip']] = dc
 
-    global g_wl_dict
     if tc_name:
         wl_file = tc_name
-        g_wl_dict = read_json_file_as_dict(wl_file)
-        run_commands(wl_file)
-        return
+        wl_dict = utils.read_json_file_as_dict(wl_file)
+        if wl_dict is not None:
+            process_commands(wl_file, wl_dict)
+    else:
+        with open(test_suite_name, 'r') as wl_suite:
+            for wl_file in wl_suite.readlines():
+                wl_file = wl_file.strip()
+                if wl_file == '' or wl_file.startswith('#'):
+                    continue
 
-    with open(test_suite_name, 'r') as wl_suite:
-        for wl_file in wl_suite.readlines():
-            wl_file = wl_file.strip()
-            if wl_file == '' or wl_file.startswith('#'):
-                continue
-
-            g_wl_dict = read_json_file_as_dict(wl_file)
-            run_commands(wl_file)
-
+                wl_dict = utils.read_json_file_as_dict(wl_file)
+                if wl_dict is not None:
+                    process_commands(wl_file, wl_dict)
     pass
 
 
-def run_commands(wl_file) -> None:
+def process_commands(wl_file, wl_dict) -> None:
     """
     Run automation from watch_list
     :return:
     """
     r_syslog('INFO', '#########################################')
-    r_syslog('INFO', 'RUN Commands from {}'.format(wl_file[:-5]))
+    r_syslog('INFO', 'RUN Commands from {}'.format(wl_file))
     r_syslog('INFO', '#########################################')
 
-    rt_vars = read_json_file_as_dict(utils.g_runtime_variables)
+    rt_vars = utils.read_json_file_as_dict(utils.g_runtime_variables)
 
-    for dut_cmd_no, w_val in g_wl_dict.items():
+    for dut_cmd_no, w_val in wl_dict.items():
         dut = dut_cmd_no.split('-')[0]
         dut_ip = dcon[dut]['ip']
         dc = g_dut_clients[dut_ip]
         cmd: str = w_val['cmd']
         watchers: typing.List = w_val['watchers']
+        create_rt_vars: typing.Dict = w_val['rt_vars']
 
         if len(watchers) > 1:
             p_dict = watchers[1]
 
             for key, val in watchers[1].items():
                 if val.startswith('MR_RT_VAR_'):
-                    p_dict[key] = rt_vars[val]
+                    if val not in rt_vars.keys():
+                        r_syslog('ERR', 'missing run time variable {} in rt_vars'.format(val))
+                        sys.exit(-1)
+                    else:
+                        p_dict[key] = rt_vars[val]
 
         watchers = json.loads(utils.replace_variables_to_dut_port_name(dut, json.dumps(watchers)))
         cmd      = utils.replace_variables_to_dut_port_name(dut, cmd)
         r_syslog('INFO', '{} : executing : {}'.format(dut_cmd_no, cmd))
 
-        dc.exec_cmd(dut_cmd_no, cmd, watchers)
+        dc.exec_cmd(dut_cmd_no, cmd, watchers, create_rt_vars)
 
+    pass
+
+
+def idp_start_automation():
+    """
+    Read watch_list file and create all required ssh sessions.
+
+    :return: None
+    """
+    for dut in dcon.keys():
+        dc = DutClients(dut, dcon[dut]['ip'], '22', 'admin', 'broadcom')
+        g_dut_clients[dcon[dut]['ip']] = dc
     pass

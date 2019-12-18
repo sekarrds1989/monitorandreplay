@@ -1,3 +1,14 @@
+#######################################
+################ TODO #################
+#######################################
+--> mr_rt_vars              :: provide option to user for hardcoding variables, And add this as part of script execution.
+                                So on every replay, this variable will be hardcoded and inserted into rt_vars.
+--> mr_trigger              ::  trigger a external python script which might initiate a traffic send.
+--> mr_read_and_configure   ::  read line by line from a text file and execute command as if user is typing it on terminal.
+                                This will help to speed up process of json generation.
+                                If there is a show command, wait for users input to select watchers.
+
+--> change all string based search to pattern based search to match the whole word
 --> provide pattern based search in show op.
     ex:
         "D1-2": {
@@ -31,15 +42,17 @@
     also it would be better if we can provide an option to input a regex against which user would like to do a match.
     This will help to monitor dynamically changing values like counters.
 
---> mr_append               ::  open a existing tc_file and add new commands to it.
---> mr_trigger              ::  trigger a external python script which might initiate a traffic send.
---> mr_read_and_configure   ::  read line by line from a text file and execute command as if user is typing it on terminal.
-                                This will help to speed up process of json generation.
-                                If there is a show command, wait for users input to select watchers.
-
---> change all string based search to pattern based search to match the whole word
 
 
-done - add exec mode. exec show version >> should run in exec mode, should not be added to tc_file.
-done - do not sort watchers based on key in json file. let it be as it is in the show command output order.
-done - replace dut port names with variables. helps to run automation on any device any port. Just by changing the topo.py
+#######################################
+################ DONE #################
+#######################################
+ - generate test_case as a self-contained independent python file, anyone can execute it from anywhere.
+    	usecase : when submitter reports a issue., there is always a big fight over how to reproduce the issue.
+			  This will solve the problem. submitter can reproduce once manually and share the python script for reproduction.
+
+ - add exec mode. exec show version >> should run in exec mode, should not be added to tc_file.
+ - do not sort watchers based on key in json file. let it be as it is in the show command output order.
+ - replace dut port names with variables. helps to run automation on any device any port. Just by changing the topo.py
+ - Create new variables from output ? add default option as N, so just by pressing enter N should be taken
+ --> mr_append               ::  open a existing tc_file and add new commands to it.

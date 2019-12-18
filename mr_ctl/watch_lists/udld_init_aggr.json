@@ -1,0 +1,476 @@
+{
+
+    "D1-1": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "N",
+                "IS_AGGR": "N",
+                "MSG_INTV": "0",
+                "MULTIPLIER": "0",
+                "TIMEOUT_INTV": "0"
+            }
+        ]
+    }
+,
+    "D1-2": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld enable\"",
+        "watchers": []
+    }
+,
+    "D1-3": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ]
+    }
+,
+    "D1-4": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "N",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "NA",
+                "OPER_UDLDSTATE": "NA",
+                "OPER_PHASE": "START",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D1-5": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"udld enable\"",
+        "watchers": []
+    }
+,
+    "D1-6": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D1-7": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld aggressive\"",
+        "watchers": []
+    }
+,
+    "D1-8": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "Y",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D1-9": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "Y",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ]
+    }
+,
+    "D1-10": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"no udld aggressive\"",
+        "watchers": []
+    }
+,
+    "D1-11": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ]
+    }
+,
+    "D1-12": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D1-13": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"udld aggressive\"",
+        "watchers": []
+    }
+,
+    "D1-14": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "Y",
+                "OPER_AGGR": "Y",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D1-15": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ]
+    }
+,
+    "D1-16": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"no udld aggressive\"",
+        "watchers": []
+    }
+,
+    "D1-17": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "N",
+                "OPER_AGGR": "N",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D1-18": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ]
+    }
+,
+    "D1-19": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"udld aggressive\"",
+        "watchers": []
+    }
+,
+    "D1-20": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "Y",
+                "OPER_AGGR": "Y",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D2-1": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"udld enable\"",
+        "watchers": []
+    }
+,
+    "D2-2": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"udld enable\"",
+        "watchers": []
+    }
+,
+    "D2-3": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"udld aggressive\"",
+        "watchers": []
+    }
+,
+    "D2-4": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "Y",
+                "OPER_AGGR": "Y",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D2-5": {
+        "cmd": "sudo udldctl global",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "IS_ENABLED": "Y",
+                "IS_AGGR": "N",
+                "MSG_INTV": "1",
+                "MULTIPLIER": "3",
+                "TIMEOUT_INTV": "3"
+            }
+        ]
+    }
+,
+    "D1-21": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"no shutdown\"",
+        "watchers": []
+    }
+,
+    "D1-22": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "Y",
+                "OPER_AGGR": "Y",
+                "OPER_LNSTATE": "DOWN",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "INDETERM",
+                "OPER_PHASE": "LINKUP",
+                "NBR_DEVID": "",
+                "NBR_DEVID_LEN": "",
+                "NBR_PORTID": "",
+                "NBR_PORTID_LEN": "",
+                "NBR_DEV_NAME": "",
+                "NBR_DEV_NAME_LEN": "",
+                "NBR_TIMEOUT": "",
+                "NBR_MSGTIME": ""
+            }
+        ]
+    }
+,
+    "D2-6": {
+        "cmd": "sudo sonic-cli -c \"configure terminal\" -c \"interface Ethernet 26\" -c \"no shutdown\"",
+        "watchers": []
+    }
+,
+    "D2-7": {
+        "cmd": "sudo sleep 2",
+        "watchers": []
+    }
+,
+    "D2-8": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "Y",
+                "OPER_AGGR": "Y",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "OPER_PHASE": "ADV",
+                "NBR_DEVID": "80A2.3526.0C5E",
+                "NBR_DEVID_LEN": "14",
+                "NBR_PORTID": "Ethernet26",
+                "NBR_PORTID_LEN": "10",
+                "NBR_DEV_NAME": "sonic",
+                "NBR_DEV_NAME_LEN": "6",
+                "NBR_TIMEOUT": "3",
+                "NBR_MSGTIME": "1"
+            }
+        ]
+    }
+,
+    "D1-23": {
+        "cmd": "sudo udldctl port Ethernet26",
+        "watchers": [
+            {
+                "watch-key": "NA"
+            },
+            {
+                "PORT": "Ethernet26",
+                "CFG_ENABLE": "Y",
+                "CFG_AGGR": "Y",
+                "OPER_AGGR": "Y",
+                "OPER_LNSTATE": "UP",
+                "OPER_OPCODE": "PROBE",
+                "OPER_UDLDSTATE": "BI-DIR",
+                "OPER_PHASE": "ADV",
+                "NBR_DEVID": "80A2.3526.0E5E",
+                "NBR_DEVID_LEN": "14",
+                "NBR_PORTID": "Ethernet26",
+                "NBR_PORTID_LEN": "10",
+                "NBR_DEV_NAME": "Leaf2",
+                "NBR_DEV_NAME_LEN": "6",
+                "NBR_TIMEOUT": "3",
+                "NBR_MSGTIME": "1"
+            }
+        ]
+    }
+}
